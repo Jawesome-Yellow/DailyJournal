@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kids Daily Quest & Journal</title>
+  <style>
+    :root {
+      --bg-color: #f0f7ff;
+      --card-bg: #ffffff;
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-soft: #dbeafe;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 16px 12px 60px;
+      transition: background-color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    /* Top Header & Kid Profile Bar */
+    header {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title-area h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fef3c7;
+      color: #b45309;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-top: 4px;
+    }
+
+    .profile-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .profile-pill {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .profile-pill.active {
+      background: var(--card-bg);
+      color: var(--primary-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid transparent;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+
+    .nav-tab-btn.active {
+      background: var(--primary-color);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Section Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .hint-subtext {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* Day Type Grid */
+    .daytype-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    .daytype-btn {
+      border: 2px solid var(--border-color);
+      background: var(--card-bg);
+      padding: 10px 8px;
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .daytype-btn .icon {
+      font-size: 1.4rem;
+    }
+
+    .daytype-btn .label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .daytype-btn.selected {
+      border-color: var(--primary-color);
+      background: var(--accent-soft);
+      transform: translateY(-2px);
+    }
+
+    .daytype-btn.selected .label {
+      color: var(--primary-color);
+    }
+
+    /* Multi-Emotion Selection */
+    .emotion-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: 10px;
+    }
+
+    .emotion-card {
+      position: relative;
+      border: 2px solid var(--border-color);
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 12px 6px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    .emotion-card:active {
+      transform: scale(0.95);
+    }
+
+    .emotion-card .emoji {
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+
+    .emotion-card .label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .emotion-card.selected {
+      border-color: var(--primary-color);
+      background: var(--accent-soft);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+    }
+
+    .emotion-card.selected .label {
+      color: var(--primary-color);
+    }
+
+    .emotion-card .check-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .emotion-card.selected .check-badge {
+      display: flex;
+    }
+
+    /* Gratitude Textarea */
+    .gratitude-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid var(--border-color);
+      font-size: 1rem;
+      color: var(--text-main);
+      resize: vertical;
+      min-height: 85px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .gratitude-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    /* Daylio-style Collapsible More Info Drawer */
+    .drawer-toggle-btn {
+      width: 100%;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      margin-bottom: 6px;
+    }
+
+    .drawer-toggle-btn:hover {
+      background: var(--accent-soft);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .drawer-content {
+      display: none;
+      padding-top: 14px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .drawer-content.open {
+      display: block;
+    }
+
+    .mini-subheading {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin: 12px 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge-chip {
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .badge-chip:hover {
+      border-color: #94a3b8;
+    }
+
+    .badge-chip.selected {
+      background: var(--accent-soft);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    /* Drawing Canvas Section */
+    .canvas-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tool-btn {
+      padding: 7px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      background: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .swatch-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1.5px #cbd5e1;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .swatch.selected {
+      transform: scale(1.25);
+      box-shadow: 0 0 0 2.5px var(--primary-color);
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 2px solid var(--border-color);
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Submit / Save Bar */
+    .action-bar {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-save {
+      flex: 1;
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-save:hover {
+      opacity: 0.95;
+      transform: translateY(-2px);
+    }
+
+    /* History & Feed Tab */
+    .history-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-export {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    .entry-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+
+    .entry-date-kid {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .entry-daytype-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--primary-color);
+    }
+
+    .entry-emotions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .entry-emotion-pill {
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .entry-gratitude {
+      font-size: 0.95rem;
+      color: #334155;
+      background: #fafaf9;
+      padding: 10px 14px;
+      border-left: 3px solid var(--primary-color);
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    .entry-extra-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .entry-extra-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #64748b;
+    }
+
+    .entry-drawing-preview {
+      width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      margin-top: 6px;
+    }
+
+    /* Profiles & Settings Tab */
+    .profile-manager-item {
+      border: 1px solid var(--border-color);
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .profile-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .input-field {
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      outline: none;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .color-option-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 0 1.5px #cbd5e1;
+      cursor: pointer;
+    }
+
+    .color-option-btn.active {
+      box-shadow: 0 0 0 2.5px var(--text-main);
+    }
+
+    /* Helper Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px 8px 50px; }
+      header { padding: 14px; }
+      .emotion-grid { grid-template-columns: repeat(3, 1fr); }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header id="appHeader">
+      <div class="title-area">
+        <h1><span id="headerAvatar">🌟</span> <span id="headerTitle">Daily Journal</span></h1>
+        <div class="streak-badge" id="streakBadge">🔥 1 Day Streak</div>
+      </div>
+      <div class="profile-switcher" id="profileSwitcher">
+        <!-- Rendered dynamically -->
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab-btn active" id="tabBtnToday" onclick="switchTab('today')">📝 Today's Entry</button>
+      <button class="nav-tab-btn" id="tabBtnHistory" onclick="switchTab('history')">📖 History & Trends</button>
+      <button class="nav-tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">⚙️ Profiles & Themes</button>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 1: TODAY'S ENTRY -->
+    <!-- ============================================== -->
+    <div id="tabToday">
+      
+      <!-- 1. What Kind of Day Was It? -->
+      <div class="card">
+        <div class="card-title">
+          <span>📅</span> What kind of day was it?
+        </div>
+        <div class="daytype-grid" id="daytypeGrid">
+          <button type="button" class="daytype-btn selected" data-value="School (Full Day)" onclick="selectDayType(this)">
+            <span class="icon">🏫</span>
+            <span class="label">School (Full)</span>
+          </button>
+          <button type="button" class="daytype-btn" data-value="School (Part Day)" onclick="selectDayType(this)">
+            <span class="icon">🎒</span>
+            <span class="label">School (Part)</span>
+          </button>
+          <button type="button" class="daytype-btn" data-value="Stayed Home" onclick="selectDayType(this)">
+            <span class="icon">🏡</span>
+            <span class="label">Stayed Home</span>
+          </button>
+          <button type="button" class="daytype-btn" data-value="Weekend / Holiday" onclick="selectDayType(this)">
+            <span class="icon">🎉</span>
+            <span class="label">Weekend</span>
+          </button>
+          <button type="button" class="daytype-btn" data-value="Sick Day" onclick="selectDayType(this)">
+            <span class="icon">🤒</span>
+            <span class="label">Sick Day</span>
+          </button>
+          <button type="button" class="daytype-btn" data-value="Trip / Adventure" onclick="selectDayType(this)">
+            <span class="icon">🚀</span>
+            <span class="label">Adventure</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Emotion Selector (Multi-Select) -->
+      <div class="card">
+        <div class="card-title">
+          <span>💭</span> How are you feeling today?
+          <span class="hint-subtext">Pick as many as you feel!</span>
+        </div>
+        <div class="emotion-grid" id="emotionGrid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- 3. Gratitude / Positive Note -->
+      <div class="card">
+        <div class="card-title">
+          <span>✨</span> One good thing that happened today:
+        </div>
+        <textarea 
+          class="gratitude-input" 
+          id="gratitudeInput" 
+          placeholder="What made you smile, laugh, or feel proud today? (e.g. Played four-square at recess, built a cool Lego fortress...)"></textarea>
+      </div>
+
+      <!-- 4. Collapsible "More Fun Details" Drawer (Opt-in) -->
+      <div class="card">
+        <button type="button" class="drawer-toggle-btn" onclick="toggleDrawer()">
+          <span>➕ Add more fun details? (Optional)</span>
+          <span id="drawerArrow">▼</span>
+        </button>
+        
+        <div class="drawer-content" id="drawerContent">
+          
+          <!-- Activities (Daylio Inspired) -->
+          <div class="mini-subheading">Activities & Fun Things:</div>
+          <div class="badge-chip-grid" id="activityChips">
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🎮 Gaming</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">⚽ Sports</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🚴 Bike/Scooter</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🧱 Legos</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🎨 Art / Crafts</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">📖 Reading</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">👥 Playdate</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">👨‍👩‍👧 Family Movie</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🌳 Outside / Park</div>
+            <div class="badge-chip" onclick="toggleChip(this, 'act')">🐶 Pet Time</div>
+          </div>
+
+          <!-- Energy Level -->
+          <div class="mini-subheading">My Energy:</div>
+          <div class="badge-chip-grid" id="energyChips">
+            <div class="badge-chip" onclick="selectSingleChip(this, 'energy')">⚡ Super Bouncy</div>
+            <div class="badge-chip selected" onclick="selectSingleChip(this, 'energy')">😊 Just Right</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'energy')">🪫 Low Battery</div>
+          </div>
+
+          <!-- Sleep Quality -->
+          <div class="mini-subheading">How I Slept:</div>
+          <div class="badge-chip-grid" id="sleepChips">
+            <div class="badge-chip selected" onclick="selectSingleChip(this, 'sleep')">😴 Slept Great</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'sleep')">🥱 Woke Up Tired</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'sleep')">🌪️ Restless Night</div>
+          </div>
+
+          <!-- Weather Outside -->
+          <div class="mini-subheading">Weather Today:</div>
+          <div class="badge-chip-grid" id="weatherChips">
+            <div class="badge-chip" onclick="selectSingleChip(this, 'weather')">☀️ Sunny</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'weather')">⛅ Clouds</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'weather')">🌧️ Rainy</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'weather')">❄️ Snowy</div>
+            <div class="badge-chip" onclick="selectSingleChip(this, 'weather')">💨 Windy</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 5. Drawing & Scribble Space -->
+      <div class="card">
+        <div class="card-title">
+          <span>🎨</span> Drawing Space
+          <span class="hint-subtext" id="toolIndicator">Tool: Pen</span>
+        </div>
+
+        <div class="canvas-toolbar">
+          <button type="button" class="tool-btn active" id="btnToolPen" onclick="setDrawingTool('pen')">✏️ Pen</button>
+          <button type="button" class="tool-btn" id="btnToolEraser" onclick="setDrawingTool('eraser')">🧹 Eraser</button>
+          <button type="button" class="tool-btn" id="btnToolBucket" onclick="setDrawingTool('bucket')">🪣 Bucket Fill</button>
+          <button type="button" class="tool-btn" onclick="clearCanvas()">🗑️ Clear</button>
+
+          <div class="swatch-group">
+            <div class="swatch selected" style="background:#0f172a;" onclick="selectColor('#0f172a', this)"></div>
+            <div class="swatch" style="background:#ef4444;" onclick="selectColor('#ef4444', this)"></div>
+            <div class="swatch" style="background:#f59e0b;" onclick="selectColor('#f59e0b', this)"></div>
+            <div class="swatch" style="background:#10b981;" onclick="selectColor('#10b981', this)"></div>
+            <div class="swatch" style="background:#3b82f6;" onclick="selectColor('#3b82f6', this)"></div>
+            <div class="swatch" style="background:#8b5cf6;" onclick="selectColor('#8b5cf6', this)"></div>
+            <div class="swatch" style="background:#ec4899;" onclick="selectColor('#ec4899', this)"></div>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="paintCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="action-bar">
+        <button type="button" class="btn-save" onclick="saveEntry()">💾 Save Entry to Quest Journal</button>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: HISTORY & TRENDS -->
+    <!-- ============================================== -->
+    <div id="tabHistory" class="hidden">
+      <div class="card">
+        <div class="history-controls">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight:800;">Saved Journal Entries</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Reviewing timeline for <strong id="historyKidName">Current Kid</strong></p>
+          </div>
+          <button class="btn-export" onclick="exportToCSV()">📊 Export to Excel (CSV)</button>
+        </div>
+
+        <div id="entriesList">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: PROFILES & THEMES -->
+    <!-- ============================================== -->
+    <div id="tabSettings" class="hidden">
+      <div class="card">
+        <div class="card-title">
+          <span>⚙️</span> Kid Profiles & Colors
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
+          Personalize each child's name, avatar emoji, and favorite background color.
+        </p>
+
+        <div id="profileManagerList">
+          <!-- Populated dynamically -->
+        </div>
+
+        <button type="button" class="btn-save" style="background:var(--primary-color); margin-top:10px;" onclick="addNewProfile()">
+          ➕ Add Another Kid Profile
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ============================================================
+       APPLICATION STATE & DEFAULT CONFIGURATION
+       ============================================================ */
+    const EMOTIONS = [
+      { id: 'happy', emoji: '😊', label: 'Happy' },
+      { id: 'excited', emoji: '🤩', label: 'Excited' },
+      { id: 'silly', emoji: '🤪', label: 'Silly' },
+      { id: 'proud', emoji: '🦁', label: 'Proud' },
+      { id: 'calm', emoji: '😌', label: 'Calm' },
+      { id: 'tired', emoji: '🥱', label: 'Tired' },
+      { id: 'worried', emoji: '😟', label: 'Worried' },
+      { id: 'frustrated', emoji: '😤', label: 'Frustrated' },
+      { id: 'sad', emoji: '😢', label: 'Sad' },
+      { id: 'mad', emoji: '😡', label: 'Mad' }
+    ];
+
+    const COLOR_THEMES = {
+      sky: { name: 'Sky Blue', bg: '#f0f7ff', primary: '#2563eb', accent: '#dbeafe' },
+      mint: { name: 'Soft Mint', bg: '#ecfdf5', primary: '#059669', accent: '#d1fae5' },
+      lavender: { name: 'Lavender', bg: '#faf5ff', primary: '#7c3aed', accent: '#ede9fe' },
+      peach: { name: 'Warm Peach', bg: '#fff7ed', primary: '#ea580c', accent: '#ffedd5' },
+      rose: { name: 'Rose Pink', bg: '#fff1f2', primary: '#e11d48', accent: '#ffe4e6' },
+      butter: { name: 'Sunny Butter', bg: '#fefce8', primary: '#ca8a04', accent: '#fef9c3' }
+    };
+
+    let profiles = JSON.parse(localStorage.getItem('kids_journal_profiles')) || [
+      { id: 'kid_1', name: 'Kacen', avatar: '🚀', theme: 'sky' },
+      { id: 'kid_2', name: 'Bodhi', avatar: '🦄', theme: 'lavender' }
+    ];
+
+    let currentKidId = localStorage.getItem('kids_journal_active_id') || profiles[0].id;
+    let entries = JSON.parse(localStorage.getItem('kids_journal_entries')) || [];
+
+    let selectedDayType = 'School (Full Day)';
+    let selectedEmotions = new Set();
+    let currentDrawingTool = 'pen'; // 'pen', 'eraser', 'bucket'
+    let currentColor = '#0f172a';
+
+    /* Canvas Drawing Engine State */
+    let canvas, ctx;
+    let isDrawing = false;
+    let lastX = 0, lastY = 0;
+
+    /* ============================================================
+       INITIALIZATION
+       ============================================================ */
+    window.addEventListener('DOMContentLoaded', () => {
+      initProfiles();
+      initCanvas();
+      renderEmotionGrid();
+      renderProfileSwitcher();
+      renderProfileManager();
+      applyTheme();
+      updateStreak();
+    });
+
+    /* ============================================================
+       THEME & PROFILE MANAGEMENT
+       ============================================================ */
+    function initProfiles() {
+      if (!profiles.find(p => p.id === currentKidId)) {
+        currentKidId = profiles[0].id;
+      }
+    }
+
+    function getCurrentProfile() {
+      return profiles.find(p => p.id === currentKidId) || profiles[0];
+    }
+
+    function applyTheme() {
+      const active = getCurrentProfile();
+      const theme = COLOR_THEMES[active.theme] || COLOR_THEMES.sky;
+      document.documentElement.style.setProperty('--bg-color', theme.bg);
+      document.documentElement.style.setProperty('--primary-color', theme.primary);
+      document.documentElement.style.setProperty('--accent-soft', theme.accent);
+      
+      document.getElementById('headerAvatar').textContent = active.avatar;
+      document.getElementById('headerTitle').textContent = `${active.name}'s Daily Quest`;
+      document.getElementById('historyKidName').textContent = active.name;
+    }
+
+    function renderProfileSwitcher() {
+      const container = document.getElementById('profileSwitcher');
+      container.innerHTML = '';
+      profiles.forEach(p => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `profile-pill ${p.id === currentKidId ? 'active' : ''}`;
+        btn.innerHTML = `<span>${p.avatar}</span> <span>${p.name}</span>`;
+        btn.onclick = () => switchProfile(p.id);
+        container.appendChild(btn);
+      });
+    }
+
+    function switchProfile(id) {
+      currentKidId = id;
+      localStorage.setItem('kids_journal_active_id', currentKidId);
+      renderProfileSwitcher();
+      applyTheme();
+      updateStreak();
+      if (!document.getElementById('tabHistory').classList.contains('hidden')) {
+        renderHistory();
+      }
+    }
+
+    function renderProfileManager() {
+      const container = document.getElementById('profileManagerList');
+      container.innerHTML = '';
+
+      profiles.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'profile-manager-item';
+
+        const colorButtonsHtml = Object.keys(COLOR_THEMES).map(k => `
+          <button type="button" 
+            class="color-option-btn ${p.theme === k ? 'active' : ''}" 
+            style="background: ${COLOR_THEMES[k].primary};"
+            title="${COLOR_THEMES[k].name}"
+            onclick="updateProfileTheme('${p.id}', '${k}')">
+          </button>
+        `).join('');
+
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Profile #${idx + 1}</strong>
+            ${profiles.length > 1 ? `<button type="button" style="border:none; background:none; color:#ef4444; font-weight:700; cursor:pointer;" onclick="deleteProfile('${p.id}')">Delete</button>` : ''}
+          </div>
+          <div class="profile-form-row">
+            <input type="text" class="input-field" style="max-width:70px; text-align:center; font-size:1.3rem;" value="${p.avatar}" onchange="updateProfileAvatar('${p.id}', this.value)" title="Avatar Emoji" />
+            <input type="text" class="input-field" value="${p.name}" onchange="updateProfileName('${p.id}', this.value)" placeholder="Child's Name" />
+            <div style="display:flex; gap:6px; align-items:center;">
+              ${colorButtonsHtml}
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateProfileName(id, val) {
+      const p = profiles.find(item => item.id === id);
+      if (p && val.trim()) {
+        p.name = val.trim();
+        saveProfilesData();
+      }
+    }
+
+    function updateProfileAvatar(id, val) {
+      const p = profiles.find(item => item.id === id);
+      if (p && val.trim()) {
+        p.avatar = val.trim();
+        saveProfilesData();
+      }
+    }
+
+    function updateProfileTheme(id, themeKey) {
+      const p = profiles.find(item => item.id === id);
+      if (p) {
+        p.theme = themeKey;
+        saveProfilesData();
+      }
+    }
+
+    function addNewProfile() {
+      const newId = 'kid_' + Date.now();
+      const themes = Object.keys(COLOR_THEMES);
+      const chosenTheme = themes[profiles.length % themes.length];
+      profiles.push({
+        id: newId,
+        name: `Kid ${profiles.length + 1}`,
+        avatar: '🎨',
+        theme: chosenTheme
+      });
+      saveProfilesData();
+    }
+
+    function deleteProfile(id) {
+      if (profiles.length <= 1) return;
+      profiles = profiles.filter(p => p.id !== id);
+      if (currentKidId === id) currentKidId = profiles[0].id;
+      saveProfilesData();
+    }
+
+    function saveProfilesData() {
+      localStorage.setItem('kids_journal_profiles', JSON.stringify(profiles));
+      renderProfileSwitcher();
+      renderProfileManager();
+      applyTheme();
+    }
+
+    /* ============================================================
+       FORM CONTROLS: DAY TYPE, EMOTIONS, DRAWER
+       ============================================================ */
+    function selectDayType(btn) {
+      document.querySelectorAll('#daytypeGrid .daytype-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedDayType = btn.getAttribute('data-value');
+    }
+
+    function renderEmotionGrid() {
+      const grid = document.getElementById('emotionGrid');
+      grid.innerHTML = '';
+      EMOTIONS.forEach(emo => {
+        const card = document.createElement('div');
+        card.className = 'emotion-card';
+        card.setAttribute('data-id', emo.id);
+        card.innerHTML = `
+          <div class="check-badge">✓</div>
+          <div class="emoji">${emo.emoji}</div>
+          <div class="label">${emo.label}</div>
+        `;
+        card.onclick = () => toggleEmotion(emo.id, card);
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleEmotion(id, cardElement) {
+      if (selectedEmotions.has(id)) {
+        selectedEmotions.delete(id);
+        cardElement.classList.remove('selected');
+      } else {
+        selectedEmotions.add(id);
+        cardElement.classList.add('selected');
+      }
+    }
+
+    function toggleDrawer() {
+      const content = document.getElementById('drawerContent');
+      const arrow = document.getElementById('drawerArrow');
+      content.classList.toggle('open');
+      arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
+    function toggleChip(chip) {
+      chip.classList.toggle('selected');
+    }
+
+    function selectSingleChip(chip, group) {
+      chip.parentElement.querySelectorAll('.badge-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+    }
+
+    /* ============================================================
+       DRAWING CANVAS: PEN, ERASER, AND FLOOD FILL (BUCKET)
+       ============================================================ */
+    function initCanvas() {
+      canvas = document.getElementById('paintCanvas');
+      ctx = canvas.getContext('2d', { willReadFrequently: true });
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Mouse & Pointer Events (Desktop & iPad / Apple Pencil)
+      canvas.addEventListener('pointerdown', startDraw);
+      canvas.addEventListener('pointermove', drawMove);
+      window.addEventListener('pointerup', stopDraw);
+      canvas.addEventListener('pointercancel', stopDraw);
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const prevData = canvas.width > 0 ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+      
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      // Fill crisp white background initially
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (prevData) {
+        ctx.putImageData(prevData, 0, 0);
+      }
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: Math.round(e.clientX - rect.left),
+        y: Math.round(e.clientY - rect.top)
+      };
+    }
+
+    function setDrawingTool(tool) {
+      currentDrawingTool = tool;
+      document.getElementById('btnToolPen').classList.toggle('active', tool === 'pen');
+      document.getElementById('btnToolEraser').classList.toggle('active', tool === 'eraser');
+      document.getElementById('btnToolBucket').classList.toggle('active', tool === 'bucket');
+      
+      const indicator = document.getElementById('toolIndicator');
+      if (tool === 'pen') indicator.textContent = 'Tool: Pen ✏️';
+      if (tool === 'eraser') indicator.textContent = 'Tool: Eraser 🧹';
+      if (tool === 'bucket') indicator.textContent = 'Tool: Fill Bucket 🪣 (Tap inside an area)';
+    }
+
+    function selectColor(color, swatchEl) {
+      currentColor = color;
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+      swatchEl.classList.add('selected');
+      if (currentDrawingTool === 'eraser') {
+        setDrawingTool('pen');
+      }
+    }
+
+    function clearCanvas() {
+      if (confirm('Clear the whole drawing?')) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function startDraw(e) {
+      const coords = getCanvasCoords(e);
+      if (currentDrawingTool === 'bucket') {
+        floodFill(coords.x, coords.y, currentColor);
+        return;
+      }
+      isDrawing = true;
+      lastX = coords.x;
+      lastY = coords.y;
+    }
+
+    function drawMove(e) {
+      if (!isDrawing || currentDrawingTool === 'bucket') return;
+      const coords = getCanvasCoords(e);
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(coords.x, coords.y);
+
+      if (currentDrawingTool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 22;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      } else {
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+
+      ctx.stroke();
+      lastX = coords.x;
+      lastY = coords.y;
+    }
+
+    function stopDraw() {
+      isDrawing = false;
+    }
+
+    /* Flood Fill Algorithm (Queue-based) */
+    function floodFill(startX, startY, fillHexColor) {
+      const width = canvas.width;
+      const height = canvas.height;
+      if (startX < 0 || startX >= width || startY < 0 || startY >= height) return;
+
+      const imgData = ctx.getImageData(0, 0, width, height);
+      const data = imgData.data;
+
+      const fillColor = hexToRgba(fillHexColor);
+      const startIndex = (startY * width + startX) * 4;
+      const startR = data[startIndex];
+      const startG = data[startIndex + 1];
+      const startB = data[startIndex + 2];
+      const startA = data[startIndex + 3];
+
+      // If already same color, do nothing
+      if (matchColor(startR, startG, startB, startA, fillColor.r, fillColor.g, fillColor.b, fillColor.a)) {
+        return;
+      }
+
+      const queue = [[startX, startY]];
+      const visited = new Uint8Array(width * height);
+      visited[startY * width + startX] = 1;
+
+      while (queue.length > 0) {
+        const [x, y] = queue.pop();
+        const idx = (y * width + x) * 4;
+
+        data[idx] = fillColor.r;
+        data[idx + 1] = fillColor.g;
+        data[idx + 2] = fillColor.b;
+        data[idx + 3] = 255;
+
+        const neighbors = [
+          [x + 1, y],
+          [x - 1, y],
+          [x, y + 1],
+          [x, y - 1]
+        ];
+
+        for (let i = 0; i < neighbors.length; i++) {
+          const nx = neighbors[i][0];
+          const ny = neighbors[i][1];
+          if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+            const nVisIdx = ny * width + nx;
+            if (!visited[nVisIdx]) {
+              visited[nVisIdx] = 1;
+              const nIdx = nVisIdx * 4;
+              if (matchColor(data[nIdx], data[nIdx + 1], data[nIdx + 2], data[nIdx + 3], startR, startG, startB, startA)) {
+                queue.push([nx, ny]);
+              }
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function matchColor(r1, g1, b1, a1, r2, g2, b2, a2) {
+      const tolerance = 32;
+      return (
+        Math.abs(r1 - r2) <= tolerance &&
+        Math.abs(g1 - g2) <= tolerance &&
+        Math.abs(b1 - b2) <= tolerance &&
+        Math.abs(a1 - a2) <= tolerance
+      );
+    }
+
+    function hexToRgba(hex) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255,
+        a: 255
+      };
+    }
+
+    /* ============================================================
+       SAVE ENTRY & EXPORT ENGINE
+       ============================================================ */
+    function saveEntry() {
+      if (selectedEmotions.size === 0) {
+        alert('Please tap at least one emotion face above!');
+        return;
+      }
+
+      const gratitudeText = document.getElementById('gratitudeInput').value.trim();
+
+      // Gather drawer context
+      const selectedActs = [];
+      document.querySelectorAll('#activityChips .badge-chip.selected').forEach(c => selectedActs.push(c.textContent.trim()));
+
+      const energyEl = document.querySelector('#energyChips .badge-chip.selected');
+      const sleepEl = document.querySelector('#sleepChips .badge-chip.selected');
+      const weatherEl = document.querySelector('#weatherChips .badge-chip.selected');
+
+      const drawingDataUrl = canvas.toDataURL('image/png');
+
+      const selectedEmotionObjects = Array.from(selectedEmotions).map(id => EMOTIONS.find(e => e.id === id));
+
+      const entry = {
+        id: 'entry_' + Date.now(),
+        kidId: currentKidId,
+        kidName: getCurrentProfile().name,
+        date: new Date().toISOString(),
+        formattedDate: new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+        dayType: selectedDayType,
+        emotions: selectedEmotionObjects.map(e => e.label),
+        emojis: selectedEmotionObjects.map(e => e.emoji),
+        gratitude: gratitudeText || 'No note written today.',
+        activities: selectedActs,
+        energy: energyEl ? energyEl.textContent.trim() : '',
+        sleep: sleepEl ? sleepEl.textContent.trim() : '',
+        weather: weatherEl ? weatherEl.textContent.trim() : '',
+        drawing: drawingDataUrl
+      };
+
+      entries.unshift(entry);
+      localStorage.setItem('kids_journal_entries', JSON.stringify(entries));
+
+      alert(`🎉 Wonderful job, ${getCurrentProfile().name}! Your entry is saved in your Quest Journal.`);
+      
+      // Reset form
+      selectedEmotions.clear();
+      document.querySelectorAll('.emotion-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('gratitudeInput').value = '';
+      document.querySelectorAll('#activityChips .badge-chip').forEach(c => c.classList.remove('selected'));
+      clearCanvas();
+
+      updateStreak();
+      switchTab('history');
+    }
+
+    function updateStreak() {
+      const kidEntries = entries.filter(e => e.kidId === currentKidId);
+      const streakCount = calculateStreak(kidEntries);
+      document.getElementById('streakBadge').textContent = `🔥 ${streakCount} Day Streak`;
+    }
+
+    function calculateStreak(kidEntries) {
+      if (!kidEntries || kidEntries.length === 0) return 0;
+      let streak = 0;
+      let checkDate = new Date();
+      checkDate.setHours(0,0,0,0);
+
+      const entryDates = new Set(kidEntries.map(e => {
+        const d = new Date(e.date);
+        d.setHours(0,0,0,0);
+        return d.getTime();
+      }));
+
+      // Check if entry logged today, if not check yesterday to keep streak alive
+      if (!entryDates.has(checkDate.getTime())) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        if (!entryDates.has(checkDate.getTime())) return 0;
+      }
+
+      while (entryDates.has(checkDate.getTime())) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      }
+      return streak;
+    }
+
+    /* ============================================================
+       TAB NAVIGATION & HISTORY FEED
+       ============================================================ */
+    function switchTab(tabId) {
+      document.getElementById('tabToday').classList.toggle('hidden', tabId !== 'today');
+      document.getElementById('tabHistory').classList.toggle('hidden', tabId !== 'history');
+      document.getElementById('tabSettings').classList.toggle('hidden', tabId !== 'settings');
+
+      document.getElementById('tabBtnToday').classList.toggle('active', tabId === 'today');
+      document.getElementById('tabBtnHistory').classList.toggle('active', tabId === 'history');
+      document.getElementById('tabBtnSettings').classList.toggle('active', tabId === 'settings');
+
+      if (tabId === 'history') {
+        renderHistory();
+      }
+      if (tabId === 'today') {
+        setTimeout(resizeCanvas, 50);
+      }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('entriesList');
+      container.innerHTML = '';
+
+      const kidEntries = entries.filter(e => e.kidId === currentKidId);
+      document.getElementById('historyKidName').textContent = getCurrentProfile().name;
+
+      if (kidEntries.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 10px; color:#94a3b8;">
+            <div style="font-size:2.8rem; margin-bottom:8px;">📖</div>
+            <p style="font-weight:700;">No entries recorded yet for ${getCurrentProfile().name}.</p>
+            <p style="font-size:0.85rem; margin-top:4px;">Head over to "Today's Entry" to complete your first daily quest!</p>
+          </div>
+        `;
+        return;
+      }
+
+      kidEntries.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'entry-card';
+
+        const emotionsHtml = item.emotions.map((lbl, idx) => `
+          <div class="entry-emotion-pill">
+            <span>${item.emojis[idx] || '😊'}</span>
+            <span>${lbl}</span>
+          </div>
+        `).join('');
+
+        const extraPills = [];
+        if (item.energy) extraPills.push(`<span class="entry-extra-tag">${item.energy}</span>`);
+        if (item.sleep) extraPills.push(`<span class="entry-extra-tag">${item.sleep}</span>`);
+        if (item.weather) extraPills.push(`<span class="entry-extra-tag">${item.weather}</span>`);
+        if (item.activities && item.activities.length) {
+          item.activities.forEach(a => extraPills.push(`<span class="entry-extra-tag">${a}</span>`));
+        }
+
+        card.innerHTML = `
+          <div class="entry-header">
+            <div>
+              <div class="entry-date-kid">${item.formattedDate}</div>
+              <div style="font-size:0.8rem; color:#64748b; font-weight:600;">Recorded by ${item.kidName}</div>
+            </div>
+            <div class="entry-daytype-tag">${item.dayType}</div>
+          </div>
+          <div class="entry-emotions-row">${emotionsHtml}</div>
+          <div class="entry-gratitude">"${item.gratitude}"</div>
+          ${extraPills.length > 0 ? `<div class="entry-extra-pills">${extraPills.join('')}</div>` : ''}
+          ${item.drawing ? `<img class="entry-drawing-preview" src="${item.drawing}" alt="Drawn note" />` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ============================================================
+       CSV / EXCEL EXPORT ENGINE
+       ============================================================ */
+    function exportToCSV() {
+      if (entries.length === 0) {
+        alert('No entries available to export yet!');
+        return;
+      }
+
+      const headers = [
+        'ID',
+        'Date Recorded',
+        'Child Name',
+        'Day Type',
+        'Emotions',
+        'Emojis',
+        'Gratitude / Good Thing',
+        'Activities',
+        'Energy Level',
+        'Sleep Quality',
+        'Weather'
+      ];
+
+      const rows = entries.map(e => [
+        e.id,
+        `"${e.formattedDate}"`,
+        `"${e.kidName}"`,
+        `"${e.dayType}"`,
+        `"${e.emotions.join(', ')}"`,
+        `"${e.emojis.join(' ')}"`,
+        `"${e.gratitude.replace(/"/g, '""')}"`,
+        `"${(e.activities || []).join(', ')}"`,
+        `"${e.energy || ''}"`,
+        `"${e.sleep || ''}"`,
+        `"${e.weather || ''}"`
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `kids_journal_data_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
