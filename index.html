@@ -39,7 +39,7 @@
     /* Header & Navigation */
     header {
       background: var(--card-bg);
-      padding: 16px 20px;
+      padding: 14px 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.04);
       position: sticky;
       top: 0;
@@ -55,6 +55,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .profile-switcher {
@@ -104,6 +105,13 @@
       color: #fff;
     }
 
+    .status-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
     .draft-badge {
       font-size: 0.75rem;
       font-weight: 600;
@@ -114,7 +122,19 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      opacity: 0.9;
+    }
+
+    .sync-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6366f1;
+      background: #e0e7ff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
     }
 
     /* Main Container */
@@ -169,10 +189,10 @@
       background: var(--bg-color);
     }
 
-    /* Grid Selectors (Day Type, Emotions, Energy) */
+    /* Grid Selectors (Day Type, Emotions, Activities, Weather) */
     .chip-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
       gap: 10px;
     }
 
@@ -207,44 +227,135 @@
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.18);
     }
 
-    /* Core Energy Level Selector */
-    .energy-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+    /* ============================================== */
+    /* INTERACTIVE ENERGY BATTERY BAR                 */
+    /* ============================================== */
+    .battery-widget {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 8px 4px 4px 4px;
     }
 
-    @media (max-width: 550px) {
-      .energy-grid {
-        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
-      }
+    .battery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .energy-btn {
+    .battery-status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .battery-percent-pill {
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--bg-color);
+      border: 1.5px solid var(--border);
+      color: var(--primary);
+    }
+
+    .battery-case-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .battery-outer-shell {
+      position: relative;
+      flex: 1;
+      height: 52px;
+      background: #e2e8f0;
+      border-radius: 18px;
+      padding: 5px;
+      border: 3px solid #cbd5e1;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+      touch-action: none;
+    }
+
+    .battery-cap {
+      width: 10px;
+      height: 24px;
+      background: #cbd5e1;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .battery-fill {
+      position: relative;
+      height: 100%;
+      width: 60%;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #f59e0b, #10b981);
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+      transition: width 0.12s ease-out, background 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .battery-shine {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.45), rgba(255,255,255,0));
+      border-radius: 10px 10px 0 0;
+      pointer-events: none;
+    }
+
+    .battery-thumb {
+      width: 18px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    .battery-ticks {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      margin-top: -4px;
+    }
+
+    .battery-tick {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 14px 8px;
-      border-radius: 16px;
-      border: 2px solid var(--border);
-      background: var(--bg-color);
+      gap: 3px;
       cursor: pointer;
-      transition: all 0.18s ease;
-      gap: 6px;
-      font-weight: 800;
-      font-size: 0.85rem;
-      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      user-select: none;
+      transition: color 0.15s, transform 0.15s;
     }
 
-    .energy-btn .emoji {
-      font-size: 1.9rem;
+    .battery-tick:hover {
+      color: var(--primary);
+      transform: translateY(-1px);
     }
 
-    .energy-btn.selected[data-level="1"] { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
-    .energy-btn.selected[data-level="2"] { background: #ffedd5; border-color: #f97316; color: #c2410c; }
-    .energy-btn.selected[data-level="3"] { background: #fef9c3; border-color: #eab308; color: #a16207; }
-    .energy-btn.selected[data-level="4"] { background: #dcfce7; border-color: #22c55e; color: #15803d; }
-    .energy-btn.selected[data-level="5"] { background: #e0e7ff; border-color: #6366f1; color: #4338ca; }
+    .tick-line {
+      width: 2px;
+      height: 8px;
+      background: #cbd5e1;
+      border-radius: 2px;
+    }
 
     /* Text Inputs */
     .prompt-group {
@@ -258,7 +369,7 @@
       font-size: 0.95rem;
     }
 
-    textarea, input[type="text"] {
+    textarea, input[type="text"], input[type="password"] {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -270,7 +381,7 @@
       resize: vertical;
     }
 
-    textarea:focus, input[type="text"]:focus {
+    textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
       outline: none;
       border-color: var(--primary);
       background: #fff;
@@ -388,38 +499,12 @@
     canvas {
       display: block;
       width: 100%;
-      height: 360px;
+      height: 380px;
       cursor: crosshair;
       touch-action: none;
     }
 
-    /* Collapsible Drawer */
-    .drawer-toggle {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      border: 2px dashed var(--border);
-      background: var(--card-bg);
-      font-weight: 800;
-      font-size: 0.98rem;
-      color: var(--primary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .drawer-content {
-      display: none;
-    }
-
-    .drawer-content.open {
-      display: block;
-    }
-
-    /* Action Buttons */
+    /* Submit & Action Buttons */
     .submit-btn {
       width: 100%;
       padding: 16px;
@@ -438,15 +523,15 @@
       transform: scale(0.99);
     }
 
-    /* History & Backup Bar */
+    /* History & Cloud Sync Bar */
     .backup-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       justify-content: space-between;
       background: var(--primary-light);
-      padding: 14px 18px;
+      padding: 16px 18px;
       border-radius: 14px;
       margin-bottom: 18px;
     }
@@ -462,931 +547,12 @@
       cursor: pointer;
     }
 
-    .entry-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
-      background: var(--bg-color);
-    }
-
-    .entry-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .entry-drawing {
-      max-width: 240px;
+    .btn-cloud-sync {
+      padding: 9px 14px;
       border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
-      margin-top: 10px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="brand">
-      <div class="profile-switcher" id="profileSwitcher"></div>
-      <span class="draft-badge" id="draftStatus">✓ Auto-saved in memory</span>
-    </div>
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('journal')">✏️ Journal</button>
-      <button class="tab-btn" onclick="switchTab('history')">📚 History</button>
-      <button class="tab-btn" onclick="switchTab('settings')">⚙️ Kids & Theme</button>
-    </div>
-  </header>
-
-  <div class="container">
-    <!-- JOURNAL TAB -->
-    <div id="tab-journal">
-
-      <!-- Date Card -->
-      <div class="card date-bar">
-        <div>
-          <h2 class="card-title" style="margin:0;">📅 Journal Date</h2>
-          <span class="sub-label">Draft saves automatically as you click or draw</span>
-        </div>
-        <input type="date" id="entryDate" onchange="saveProceduralDraft()" />
-      </div>
-
-      <!-- Day Type -->
-      <div class="card">
-        <div class="card-title">
-          <span>🏫 What Kind of Day Was It?</span>
-          <span class="sub-label">Pick one or more</span>
-        </div>
-        <div class="chip-grid" id="dayTypeGrid"></div>
-      </div>
-
-      <!-- Multi-Emotion Selector -->
-      <div class="card">
-        <div class="card-title">
-          <span>🎭 How Are You Feeling Today?</span>
-          <span class="sub-label">Pick all the feelings that match</span>
-        </div>
-        <div class="chip-grid" id="emotionGrid"></div>
-      </div>
-
-      <!-- CORE PIECE: Energy Level -->
-      <div class="card">
-        <div class="card-title">
-          <span>⚡ My Energy Level Today</span>
-          <span class="sub-label">How charged is your battery?</span>
-        </div>
-        <div class="energy-grid" id="energyGrid"></div>
-      </div>
-
-      <!-- Gratitude & Highlights -->
-      <div class="card">
-        <div class="card-title">🌟 Highlights & Gratitude</div>
-        <div class="prompt-group">
-          <label>1. Best part of today:</label>
-          <textarea id="bestPart" rows="2" placeholder="Something fun, cool, or awesome..." oninput="saveProceduralDraft()"></textarea>
-        </div>
-        <div class="prompt-group">
-          <label>2. Something I am thankful for:</label>
-          <textarea id="gratefulFor" rows="2" placeholder="A person, pet, game, food, or moment..." oninput="saveProceduralDraft()"></textarea>
-        </div>
-        <div class="prompt-group" style="margin-bottom:0;">
-          <label>3. Anything tricky or on my mind? (Optional):</label>
-          <textarea id="trickyPart" rows="2" placeholder="Write whatever is on your mind..." oninput="saveProceduralDraft()"></textarea>
-        </div>
-      </div>
-
-      <!-- Upgraded Drawing Studio -->
-      <div class="card">
-        <div class="card-title">
-          <span>🎨 Doodle & Shape Studio</span>
-          <span class="sub-label">Draw freehand or click-and-drag shapes!</span>
-        </div>
-
-        <div class="studio-toolbar">
-          <!-- Row 1: Tools & Undo/Clear -->
-          <div class="toolbar-row">
-            <div class="tool-group">
-              <button class="tool-btn active" id="tool-brush" onclick="setDrawTool('brush')">🖌️ Brush</button>
-              <button class="tool-btn" id="tool-eraser" onclick="setDrawTool('eraser')">🧽 Eraser</button>
-              <button class="tool-btn" id="tool-bucket" onclick="setDrawTool('bucket')">🪣 Bucket</button>
-              <button class="tool-btn" id="tool-rect" onclick="setDrawTool('rect')">⬜ Square</button>
-              <button class="tool-btn" id="tool-circle" onclick="setDrawTool('circle')">⭕ Circle</button>
-              <button class="tool-btn" id="tool-triangle" onclick="setDrawTool('triangle')">🔺 Triangle</button>
-            </div>
-            <div class="tool-group">
-              <button class="tool-btn" id="undoBtn" onclick="undoCanvas()" disabled>↩️ Undo (0)</button>
-              <button class="tool-btn" onclick="clearCanvas(true)">🗑️ Clear</button>
-            </div>
-          </div>
-
-          <!-- Row 2: 3 Sizes (Small, Medium, Large) & Colors (Including White) -->
-          <div class="toolbar-row">
-            <div class="tool-group">
-              <span class="sub-label" style="margin-right:4px;">Size:</span>
-              <button class="size-btn" id="size-small" onclick="setBrushSize('small')">
-                <span class="dot-preview" style="width:6px;height:6px;"></span> Small
-              </button>
-              <button class="size-btn active" id="size-medium" onclick="setBrushSize('medium')">
-                <span class="dot-preview" style="width:12px;height:12px;"></span> Medium
-              </button>
-              <button class="size-btn" id="size-large" onclick="setBrushSize('large')">
-                <span class="dot-preview" style="width:18px;height:18px;"></span> Large
-              </button>
-            </div>
-
-            <div class="color-palette" id="colorPalette"></div>
-          </div>
-        </div>
-
-        <div class="canvas-wrapper">
-          <canvas id="journalCanvas" width="900" height="450"></canvas>
-        </div>
-      </div>
-
-      <!-- Optional More Info Drawer -->
-      <button class="drawer-toggle" onclick="toggleMoreDrawer()" id="drawerBtn">
-        ➕ More Info (Activities, Sleep & Weather) — Optional
-      </button>
-
-      <div class="drawer-content" id="moreDrawer">
-        <div class="card">
-          <div class="card-title">🏃 Activities & Fun</div>
-          <div class="chip-grid" id="activityGrid"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🌦️ Weather & Sleep</div>
-          <div class="chip-grid" id="weatherGrid" style="margin-bottom:16px;"></div>
-          <div class="prompt-group" style="margin-bottom:0;">
-            <label>😴 How did I sleep last night?</label>
-            <input type="text" id="sleepNote" placeholder="e.g., Great, woke up early, had a cool dream..." oninput="saveProceduralDraft()" />
-          </div>
-        </div>
-      </div>
-
-      <button class="submit-btn" onclick="submitJournalEntry()">✅ Save & Submit Journal Entry</button>
-    </div>
-
-    <!-- HISTORY TAB -->
-    <div id="tab-history" class="hidden">
-      <div class="backup-bar">
-        <div>
-          <strong>🛡️ Separate History File (`journal_history.json`)</strong>
-          <div class="sub-label">History stays safe in your browser across site updates, or save/load a separate file anytime.</div>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn-secondary" onclick="exportHistoryJSON()">💾 Save History File (.json)</button>
-          <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📂 Load History File</button>
-          <button class="btn-secondary" onclick="exportHistoryCSV()">📊 Export Excel (.csv)</button>
-          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importHistoryJSON(event)" />
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>📖 Past Journal Submissions</span>
-          <label style="font-size:0.82rem; font-weight:600; display:flex; align-items:center; gap:6px; cursor:pointer;">
-            <input type="checkbox" id="autoDownloadToggle" onchange="toggleAutoDownload()" />
-            Auto-download history file on every submit
-          </label>
-        </div>
-        <div id="historyList"></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS TAB -->
-    <div id="tab-settings" class="hidden">
-      <div class="card">
-        <div class="card-title">👧👦 Customize Kids & Colors</div>
-        <div id="profilesEditor"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    /**************************************************************
-     * 1. CONSTANTS & OPTIONS
-     **************************************************************/
-    const DAY_TYPES = [
-      { id: 'full_school', label: 'Full School Day', emoji: '🎒' },
-      { id: 'part_school', label: 'Part School Day', emoji: '🕒' },
-      { id: 'weekend', label: 'Weekend', emoji: '🎉' },
-      { id: 'home_day', label: 'Home / Chill Day', emoji: '🏠' },
-      { id: 'sick_day', label: 'Sick / Rest Day', emoji: '🤒' },
-      { id: 'special_trip', label: 'Special / Trip', emoji: '✈️' }
-    ];
-
-    const EMOTIONS = [
-      { id: 'happy', label: 'Happy', emoji: '😄' },
-      { id: 'excited', label: 'Excited', emoji: '🤩' },
-      { id: 'calm', label: 'Calm', emoji: '😌' },
-      { id: 'proud', label: 'Proud', emoji: '🏆' },
-      { id: 'silly', label: 'Silly', emoji: '🤪' },
-      { id: 'grateful', label: 'Thankful', emoji: '🥰' },
-      { id: 'tired', label: 'Tired', emoji: '🥱' },
-      { id: 'bored', label: 'Bored', emoji: '😐' },
-      { id: 'nervous', label: 'Nervous', emoji: '😬' },
-      { id: 'frustrated', label: 'Frustrated', emoji: '😤' },
-      { id: 'sad', label: 'Sad', emoji: '😢' },
-      { id: 'angry', label: 'Angry', emoji: '😡' }
-    ];
-
-    const ENERGY_LEVELS = [
-      { level: 1, label: 'Empty (1/5)', emoji: '🪫' },
-      { level: 2, label: 'Low (2/5)', emoji: '🐢' },
-      { level: 3, label: 'Steady (3/5)', emoji: '🙂' },
-      { level: 4, label: 'High (4/5)', emoji: '⚡' },
-      { level: 5, label: 'Supercharged (5/5)', emoji: '🚀' }
-    ];
-
-    const ACTIVITIES = [
-      { id: 'gaming', label: 'Gaming', emoji: '🎮' },
-      { id: 'dance', label: 'Dance', emoji: '🩰' },
-      { id: 'outside', label: 'Outside', emoji: '🌲' },
-      { id: 'reading', label: 'Reading', emoji: '📚' },
-      { id: 'art', label: 'Creating / Art', emoji: '🎨' },
-      { id: 'coding', label: 'Game Dev / Tech', emoji: '💻' },
-      { id: 'friends', label: 'Friends', emoji: '🤝' },
-      { id: 'family', label: 'Family Time', emoji: '🍿' }
-    ];
-
-    const WEATHER = [
-      { id: 'sunny', label: 'Sunny', emoji: '☀️' },
-      { id: 'cloudy', label: 'Cloudy', emoji: '☁️' },
-      { id: 'rainy', label: 'Rainy', emoji: '🌧️' },
-      { id: 'snowy', label: 'Snowy', emoji: '❄️' }
-    ];
-
-    // Includes pure White (#FFFFFF) + rich palette
-    const PALETTE_COLORS = [
-      '#1e293b', // Black / Charcoal
-      '#ffffff', // Pure White
-      '#ef4444', // Red
-      '#f97316', // Orange
-      '#eab308', // Yellow
-      '#22c55e', // Green
-      '#06b6d4', // Cyan
-      '#3b82f6', // Blue
-      '#8b5cf6', // Purple
-      '#ec4899', // Pink
-      '#78350f'  // Brown
-    ];
-
-    const SIZE_MAP = {
-      brush:  { small: 4,  medium: 10, large: 22 },
-      eraser: { small: 12, medium: 28, large: 54 },
-      shape:  { small: 3,  medium: 6,  large: 12 }
-    };
-
-    /**************************************************************
-     * 2. STATE & STORAGE KEYS
-     **************************************************************/
-    const STORAGE_PROFILES = 'dailyJournal_profiles_v1';
-    const STORAGE_HISTORY  = 'dailyJournal_entries_v1';
-    const STORAGE_DRAFT    = 'dailyJournal_draft_v1';
-    const STORAGE_AUTOBACK = 'dailyJournal_autoBackup_v1';
-
-    let profiles = JSON.parse(localStorage.getItem(STORAGE_PROFILES)) || [
-      { id: 'kid1', name: 'Kacen', avatar: '🚀', color: '#4f46e5', bg: '#eef2ff' },
-      { id: 'kid2', name: 'Bodhi', avatar: '🦄', color: '#db2777', bg: '#fdf2f8' }
-    ];
-
-    let activeKidId = profiles[0].id;
-    let entries = JSON.parse(localStorage.getItem(STORAGE_HISTORY)) || [];
-
-    // Current working form state (procedurally saved)
-    let draftState = {
-      kidId: activeKidId,
-      date: new Date().toISOString().split('T')[0],
-      dayTypes: [],
-      emotions: [],
-      energyLevel: null,
-      bestPart: '',
-      gratefulFor: '',
-      trickyPart: '',
-      activities: [],
-      weather: [],
-      sleepNote: '',
-      canvasDataUrl: null,
-      drawerOpen: false
-    };
-
-    /**************************************************************
-     * 3. DRAWING STUDIO ENGINE (10 UNDOS + DRAG SHAPES + S/M/L)
-     **************************************************************/
-    const canvas = document.getElementById('journalCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let currentTool = 'brush'; // 'brush' | 'eraser' | 'bucket' | 'rect' | 'circle' | 'triangle'
-    let currentSizeKey = 'medium'; // 'small' | 'medium' | 'large'
-    let currentColor = PALETTE_COLORS[0];
-
-    let isDrawing = false;
-    let startX = 0;
-    let startY = 0;
-    let dragSnapshot = null; // ImageData for live shape dragging
-
-    const MAX_UNDOS = 10;
-    let undoStack = [];
-
-    function initCanvasBlank() {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function pushUndoState() {
-      if (undoStack.length >= MAX_UNDOS) {
-        undoStack.shift();
-      }
-      undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-      updateUndoButtonUI();
-    }
-
-    function undoCanvas() {
-      if (undoStack.length === 0) return;
-      const previousImage = undoStack.pop();
-      ctx.putImageData(previousImage, 0, 0);
-      updateUndoButtonUI();
-      saveProceduralDraft();
-    }
-
-    function updateUndoButtonUI() {
-      const btn = document.getElementById('undoBtn');
-      btn.textContent = `↩️ Undo (${undoStack.length})`;
-      btn.disabled = undoStack.length === 0;
-    }
-
-    function clearCanvas(recordUndo = true) {
-      if (recordUndo) pushUndoState();
-      initCanvasBlank();
-      saveProceduralDraft();
-    }
-
-    function setDrawTool(tool) {
-      currentTool = tool;
-      ['brush', 'eraser', 'bucket', 'rect', 'circle', 'triangle'].forEach(t => {
-        document.getElementById('tool-' + t).classList.toggle('active', t === tool);
-      });
-    }
-
-    function setBrushSize(sizeKey) {
-      currentSizeKey = sizeKey;
-      ['small', 'medium', 'large'].forEach(s => {
-        document.getElementById('size-' + s).classList.toggle('active', s === sizeKey);
-      });
-    }
-
-    function setColor(color) {
-      currentColor = color;
-      if (currentTool === 'eraser') {
-        setDrawTool('brush');
-      }
-      renderPalette();
-    }
-
-    function renderPalette() {
-      const container = document.getElementById('colorPalette');
-      container.innerHTML = '';
-      PALETTE_COLORS.forEach(color => {
-        const swatch = document.createElement('div');
-        swatch.className = 'color-swatch' + (color === currentColor ? ' active' : '');
-        swatch.style.backgroundColor = color;
-        if (color.toLowerCase() === '#ffffff') {
-          swatch.title = 'White';
-        }
-        swatch.onclick = () => setColor(color);
-        container.appendChild(swatch);
-      });
-    }
-
-    function getCanvasCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
-    }
-
-    function handlePointerDown(e) {
-      e.preventDefault();
-      const pos = getCanvasCoords(e);
-
-      if (currentTool === 'bucket') {
-        pushUndoState();
-        floodFill(Math.floor(pos.x), Math.floor(pos.y), currentColor);
-        saveProceduralDraft();
-        return;
-      }
-
-      pushUndoState();
-      isDrawing = true;
-      startX = pos.x;
-      startY = pos.y;
-
-      if (currentTool === 'brush' || currentTool === 'eraser') {
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
-        ctx.lineWidth = currentTool === 'eraser'
-          ? SIZE_MAP.eraser[currentSizeKey]
-          : SIZE_MAP.brush[currentSizeKey];
-        // Draw single dot if clicked
-        ctx.lineTo(startX + 0.1, startY + 0.1);
-        ctx.stroke();
-      } else {
-        // Shape dragging: save snapshot before dragging
-        dragSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    function handlePointerMove(e) {
-      if (!isDrawing) return;
-      e.preventDefault();
-      const pos = getCanvasCoords(e);
-
-      if (currentTool === 'brush' || currentTool === 'eraser') {
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-      } else if (['rect', 'circle', 'triangle'].includes(currentTool)) {
-        // Restore clean snapshot and draw stretched shape preview
-        ctx.putImageData(dragSnapshot, 0, 0);
-        drawDraggedShape(currentTool, startX, startY, pos.x, pos.y);
-      }
-    }
-
-    function handlePointerUp(e) {
-      if (!isDrawing) return;
-      isDrawing = false;
-      dragSnapshot = null;
-      saveProceduralDraft();
-    }
-
-    function drawDraggedShape(shape, x1, y1, x2, y2) {
-      ctx.save();
-      ctx.fillStyle = currentColor;
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = SIZE_MAP.shape[currentSizeKey];
-      ctx.lineJoin = 'round';
-
-      const left = Math.min(x1, x2);
-      const top = Math.min(y1, y2);
-      const w = Math.abs(x2 - x1);
-      const h = Math.abs(y2 - y1);
-
-      ctx.beginPath();
-      if (shape === 'rect') {
-        ctx.fillRect(left, top, w, h);
-      } else if (shape === 'circle') {
-        // Supports any oval/circle proportion dragged by user
-        const cx = left + w / 2;
-        const cy = top + h / 2;
-        ctx.ellipse(cx, cy, w / 2, h / 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (shape === 'triangle') {
-        ctx.moveTo(left + w / 2, top);
-        ctx.lineTo(left + w, top + h);
-        ctx.lineTo(left, top + h);
-        ctx.closePath();
-        ctx.fill();
-      }
-      ctx.restore();
-    }
-
-    // Fast Flood Fill (Paint Bucket)
-    function hexToRgb(hex) {
-      const clean = hex.replace('#', '');
-      const num = parseInt(clean, 16);
-      return [(num >> 16) & 255, (num >> 8) & 255, num & 255, 255];
-    }
-
-    function floodFill(startX, startY, fillHex) {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imgData.data;
-      const width = canvas.width;
-      const height = canvas.height;
-
-      const startIdx = (startY * width + startX) * 4;
-      const targetR = data[startIdx];
-      const targetG = data[startIdx + 1];
-      const targetB = data[startIdx + 2];
-      const [fillR, fillG, fillB] = hexToRgb(fillHex);
-
-      if (targetR === fillR && targetG === fillG && targetB === fillB) return;
-
-      const stack = [[startX, startY]];
-      while (stack.length > 0) {
-        const [x, y] = stack.pop();
-        if (x < 0 || x >= width || y < 0 || y >= height) continue;
-        const idx = (y * width + x) * 4;
-        if (
-          Math.abs(data[idx] - targetR) <= 20 &&
-          Math.abs(data[idx + 1] - targetG) <= 20 &&
-          Math.abs(data[idx + 2] - targetB) <= 20
-        ) {
-          data[idx] = fillR;
-          data[idx + 1] = fillG;
-          data[idx + 2] = fillB;
-          data[idx + 3] = 255;
-          stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
-        }
-      }
-      ctx.putImageData(imgData, 0, 0);
-    }
-
-    // Bind mouse & touch events
-    canvas.addEventListener('mousedown', handlePointerDown);
-    canvas.addEventListener('mousemove', handlePointerMove);
-    window.addEventListener('mouseup', handlePointerUp);
-    canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
-    canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
-    window.addEventListener('touchend', handlePointerUp);
-
-    /**************************************************************
-     * 4. PROCEDURAL AUTO-SAVE IN MEMORY (SURVIVES REFRESH/CLOSE)
-     **************************************************************/
-    function saveProceduralDraft() {
-      draftState.kidId = activeKidId;
-      draftState.date = document.getElementById('entryDate').value;
-      draftState.bestPart = document.getElementById('bestPart').value;
-      draftState.gratefulFor = document.getElementById('gratefulFor').value;
-      draftState.trickyPart = document.getElementById('trickyPart').value;
-      draftState.sleepNote = document.getElementById('sleepNote').value;
-      draftState.canvasDataUrl = canvas.toDataURL('image/png');
-
-      localStorage.setItem(STORAGE_DRAFT + '_' + activeKidId, JSON.stringify(draftState));
-
-      const badge = document.getElementById('draftStatus');
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      badge.textContent = `✓ Draft auto-saved (${now})`;
-    }
-
-    function loadProceduralDraftForKid(kidId) {
-      const saved = localStorage.getItem(STORAGE_DRAFT + '_' + kidId);
-      undoStack = [];
-      updateUndoButtonUI();
-
-      if (saved) {
-        try {
-          draftState = JSON.parse(saved);
-        } catch (e) {
-          resetDraftObject(kidId);
-        }
-      } else {
-        resetDraftObject(kidId);
-      }
-
-      // Sync UI inputs
-      document.getElementById('entryDate').value = draftState.date || new Date().toISOString().split('T')[0];
-      document.getElementById('bestPart').value = draftState.bestPart || '';
-      document.getElementById('gratefulFor').value = draftState.gratefulFor || '';
-      document.getElementById('trickyPart').value = draftState.trickyPart || '';
-      document.getElementById('sleepNote').value = draftState.sleepNote || '';
-
-      const drawer = document.getElementById('moreDrawer');
-      drawer.classList.toggle('open', !!draftState.drawerOpen);
-
-      renderInteractiveGrids();
-
-      initCanvasBlank();
-      if (draftState.canvasDataUrl) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-        };
-        img.src = draftState.canvasDataUrl;
-      }
-    }
-
-    function resetDraftObject(kidId) {
-      draftState = {
-        kidId: kidId,
-        date: new Date().toISOString().split('T')[0],
-        dayTypes: [],
-        emotions: [],
-        energyLevel: null,
-        bestPart: '',
-        gratefulFor: '',
-        trickyPart: '',
-        activities: [],
-        weather: [],
-        sleepNote: '',
-        canvasDataUrl: null,
-        drawerOpen: false
-      };
-    }
-
-    /**************************************************************
-     * 5. RENDERING UI & MULTI-SELECT GRIDS
-     **************************************************************/
-    function applyThemeForActiveKid() {
-      const kid = profiles.find(p => p.id === activeKidId) || profiles[0];
-      document.documentElement.style.setProperty('--primary', kid.color);
-      document.documentElement.style.setProperty('--bg-color', kid.bg);
-    }
-
-    function renderProfileSwitcher() {
-      const container = document.getElementById('profileSwitcher');
-      container.innerHTML = '';
-      profiles.forEach(kid => {
-        const btn = document.createElement('button');
-        btn.className = 'kid-pill' + (kid.id === activeKidId ? ' active' : '');
-        btn.innerHTML = `<span>${kid.avatar}</span> <span>${kid.name}</span>`;
-        btn.onclick = () => {
-          activeKidId = kid.id;
-          applyThemeForActiveKid();
-          renderProfileSwitcher();
-          loadProceduralDraftForKid(activeKidId);
-          renderHistoryList();
-        };
-        container.appendChild(btn);
-      });
-    }
-
-    function toggleArrayItem(arr, item) {
-      const idx = arr.indexOf(item);
-      if (idx === -1) arr.push(item);
-      else arr.splice(idx, 1);
-      saveProceduralDraft();
-      renderInteractiveGrids();
-    }
-
-    function renderInteractiveGrids() {
-      // Day Types
-      const dayContainer = document.getElementById('dayTypeGrid');
-      dayContainer.innerHTML = '';
-      DAY_TYPES.forEach(d => {
-        const el = document.createElement('div');
-        el.className = 'chip' + (draftState.dayTypes.includes(d.id) ? ' selected' : '');
-        el.innerHTML = `<span class="emoji">${d.emoji}</span><span>${d.label}</span>`;
-        el.onclick = () => toggleArrayItem(draftState.dayTypes, d.id);
-        dayContainer.appendChild(el);
-      });
-
-      // Emotions
-      const emoContainer = document.getElementById('emotionGrid');
-      emoContainer.innerHTML = '';
-      EMOTIONS.forEach(e => {
-        const el = document.createElement('div');
-        el.className = 'chip' + (draftState.emotions.includes(e.id) ? ' selected' : '');
-        el.innerHTML = `<span class="emoji">${e.emoji}</span><span>${e.label}</span>`;
-        el.onclick = () => toggleArrayItem(draftState.emotions, e.id);
-        emoContainer.appendChild(el);
-      });
-
-      // Core Energy Level
-      const energyContainer = document.getElementById('energyGrid');
-      energyContainer.innerHTML = '';
-      ENERGY_LEVELS.forEach(en => {
-        const el = document.createElement('div');
-        el.className = 'energy-btn' + (draftState.energyLevel === en.level ? ' selected' : '');
-        el.setAttribute('data-level', en.level);
-        el.innerHTML = `<span class="emoji">${en.emoji}</span><span>${en.label}</span>`;
-        el.onclick = () => {
-          draftState.energyLevel = en.level;
-          saveProceduralDraft();
-          renderInteractiveGrids();
-        };
-        energyContainer.appendChild(el);
-      });
-
-      // Activities
-      const actContainer = document.getElementById('activityGrid');
-      actContainer.innerHTML = '';
-      ACTIVITIES.forEach(a => {
-        const el = document.createElement('div');
-        el.className = 'chip' + (draftState.activities.includes(a.id) ? ' selected' : '');
-        el.innerHTML = `<span class="emoji">${a.emoji}</span><span>${a.label}</span>`;
-        el.onclick = () => toggleArrayItem(draftState.activities, a.id);
-        actContainer.appendChild(el);
-      });
-
-      // Weather
-      const weaContainer = document.getElementById('weatherGrid');
-      weaContainer.innerHTML = '';
-      WEATHER.forEach(w => {
-        const el = document.createElement('div');
-        el.className = 'chip' + (draftState.weather.includes(w.id) ? ' selected' : '');
-        el.innerHTML = `<span class="emoji">${w.emoji}</span><span>${w.label}</span>`;
-        el.onclick = () => toggleArrayItem(draftState.weather, w.id);
-        weaContainer.appendChild(el);
-      });
-    }
-
-    function toggleMoreDrawer() {
-      const drawer = document.getElementById('moreDrawer');
-      draftState.drawerOpen = !drawer.classList.contains('open');
-      drawer.classList.toggle('open', draftState.drawerOpen);
-      saveProceduralDraft();
-    }
-
-    /**************************************************************
-     * 6. SUBMIT & PERMANENT HISTORY PERSISTENCE
-     **************************************************************/
-    function submitJournalEntry() {
-      const kid = profiles.find(p => p.id === activeKidId) || profiles[0];
-
-      const newEntry = {
-        id: 'entry_' + Date.now(),
-        timestamp: new Date().toISOString(),
-        kidId: kid.id,
-        kidName: kid.name,
-        date: document.getElementById('entryDate').value,
-        dayTypes: [...draftState.dayTypes],
-        emotions: [...draftState.emotions],
-        energyLevel: draftState.energyLevel,
-        bestPart: document.getElementById('bestPart').value.trim(),
-        gratefulFor: document.getElementById('gratefulFor').value.trim(),
-        trickyPart: document.getElementById('trickyPart').value.trim(),
-        activities: [...draftState.activities],
-        weather: [...draftState.weather],
-        sleepNote: document.getElementById('sleepNote').value.trim(),
-        drawing: canvas.toDataURL('image/png')
-      };
-
-      entries.unshift(newEntry);
-      localStorage.setItem(STORAGE_HISTORY, JSON.stringify(entries));
-
-      // Clear procedural draft for this kid now that it's submitted
-      localStorage.removeItem(STORAGE_DRAFT + '_' + activeKidId);
-      resetDraftObject(activeKidId);
-      loadProceduralDraftForKid(activeKidId);
-
-      // Optional auto-download of separate history file
-      if (localStorage.getItem(STORAGE_AUTOBACK) === 'true') {
-        exportHistoryJSON();
-      }
-
-      alert(`Awesome job, ${kid.name}! Your journal entry is saved!`);
-      switchTab('history');
-    }
-
-    function renderHistoryList() {
-      const container = document.getElementById('historyList');
-      const kidEntries = entries.filter(e => e.kidId === activeKidId);
-
-      if (kidEntries.length === 0) {
-        container.innerHTML = `<p class="sub-label">No entries saved for this profile yet.</p>`;
-        return;
-      }
-
-      container.innerHTML = kidEntries.map(e => {
-        const emoText = (e.emotions || []).map(id => {
-          const found = EMOTIONS.find(x => x.id === id);
-          return found ? `${found.emoji} ${found.label}` : id;
-        }).join(', ') || 'None selected';
-
-        const energyObj = ENERGY_LEVELS.find(x => x.level === e.energyLevel);
-        const energyText = energyObj ? `${energyObj.emoji} ${energyObj.label}` : 'Not rated';
-
-        return `
-          <div class="entry-item">
-            <div class="entry-header">
-              <span>📅 ${e.date} — ${e.kidName}</span>
-              <span>Energy: ${energyText}</span>
-            </div>
-            <div><strong>Feelings:</strong> ${emoText}</div>
-            ${e.bestPart ? `<div style="margin-top:6px;"><strong>🌟 Best Part:</strong> ${e.bestPart}</div>` : ''}
-            ${e.gratefulFor ? `<div style="margin-top:4px;"><strong>🥰 Grateful For:</strong> ${e.gratefulFor}</div>` : ''}
-            ${e.trickyPart ? `<div style="margin-top:4px;"><strong>💭 On My Mind:</strong> ${e.trickyPart}</div>` : ''}
-            ${e.drawing ? `<img class="entry-drawing" src="${e.drawing}" alt="Drawing" />` : ''}
-          </div>
-        `;
-      }).join('');
-    }
-
-    // Export separate JSON history file
-    function exportHistoryJSON() {
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        profiles: profiles,
-        entries: entries
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `journal_history.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // Import & smart-merge separate JSON history file (never overwrites newer entries)
-    function importHistoryJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (Array.isArray(data.entries)) {
-            const existingIds = new Set(entries.map(x => x.id));
-            let added = 0;
-            data.entries.forEach(item => {
-              if (!existingIds.has(item.id)) {
-                entries.push(item);
-                added++;
-              }
-            });
-            entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            localStorage.setItem(STORAGE_HISTORY, JSON.stringify(entries));
-            renderHistoryList();
-            alert(`Loaded ${added} new entries from history file!`);
-          }
-        } catch (err) {
-          alert('Could not read history file.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function exportHistoryCSV() {
-      const headers = ['Date', 'Kid', 'DayTypes', 'Emotions', 'EnergyLevel', 'BestPart', 'GratefulFor', 'TrickyPart', 'Activities', 'Weather', 'Sleep'];
-      const rows = entries.map(e => [
-        e.date,
-        e.kidName,
-        (e.dayTypes || []).join('|'),
-        (e.emotions || []).join('|'),
-        e.energyLevel || '',
-        `"${(e.bestPart || '').replace(/"/g, '""')}"`,
-        `"${(e.gratefulFor || '').replace(/"/g, '""')}"`,
-        `"${(e.trickyPart || '').replace(/"/g, '""')}"`,
-        (e.activities || []).join('|'),
-        (e.weather || []).join('|'),
-        `"${(e.sleepNote || '').replace(/"/g, '""')}"`
-      ]);
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'journal_export.csv';
-      a.click();
-    }
-
-    function toggleAutoDownload() {
-      const checked = document.getElementById('autoDownloadToggle').checked;
-      localStorage.setItem(STORAGE_AUTOBACK, checked ? 'true' : 'false');
-    }
-
-    /**************************************************************
-     * 7. KIDS & THEME CUSTOMIZATION
-     **************************************************************/
-    function renderProfilesEditor() {
-      const container = document.getElementById('profilesEditor');
-      container.innerHTML = profiles.map((p, idx) => `
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
-          <input type="text" value="${p.avatar}" style="width:60px; text-align:center;" onchange="updateProfile(${idx}, 'avatar', this.value)" />
-          <input type="text" value="${p.name}" style="width:180px;" onchange="updateProfile(${idx}, 'name', this.value)" />
-          <label style="font-size:0.85rem; font-weight:700;">Accent:
-            <input type="color" value="${p.color}" onchange="updateProfile(${idx}, 'color', this.value)" />
-          </label>
-          <label style="font-size:0.85rem; font-weight:700;">Background:
-            <input type="color" value="${p.bg}" onchange="updateProfile(${idx}, 'bg', this.value)" />
-          </label>
-        </div>
-      `).join('');
-    }
-
-    function updateProfile(idx, key, val) {
-      profiles[idx][key] = val;
-      localStorage.setItem(STORAGE_PROFILES, JSON.stringify(profiles));
-      applyThemeForActiveKid();
-      renderProfileSwitcher();
-    }
-
-    function switchTab(tabName) {
-      ['journal', 'history', 'settings'].forEach(t => {
-        document.getElementById('tab-' + t).classList.toggle('hidden', t !== tabName);
-      });
-      const btns = document.querySelectorAll('.tab-btn');
-      btns[0].classList.toggle('active', tabName === 'journal');
-      btns.classList.toggle('active', tabName === 'history');
-      btns.classList.toggle('active', tabName === 'settings');
-
-      if (tabName === 'history') renderHistoryList();
-      if (tabName === 'settings') renderProfilesEditor();
-    }
-
-    // Initialize App on Load
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('autoDownloadToggle').checked = localStorage.getItem(STORAGE_AUTOBACK) === 'true';
-      applyThemeForActiveKid();
-      renderProfileSwitcher();
-      renderPalette();
-      loadProceduralDraftForKid(activeKidId);
-    });
-  </script>
-</body>
-</html>
+      border: none;
+      background: #10b981;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cu
