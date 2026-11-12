@@ -1,0 +1,16 @@
+[
+  {
+    "id": "kid1",
+    "name": "Kacen",
+    "avatar": "🐼",
+    "color": "#4f46e5",
+    "bg": "#eef2ff"
+  },
+  {
+    "id": "kid2",
+    "name": "Bodhi",
+    "avatar": "🦄",
+    "color": "#db2777",
+    "bg": "#fdf2f8"
+  }
+]
