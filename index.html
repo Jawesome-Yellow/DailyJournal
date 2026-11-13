@@ -555,4 +555,1180 @@
       color: #fff;
       font-weight: 700;
       font-size: 0.85rem;
-      cu
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    }
+
+    .entry-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: var(--bg-color);
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .entry-drawing {
+      max-width: 260px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .sync-panel {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="profile-switcher" id="profileSwitcher"></div>
+      <div class="status-badges">
+        <span class="draft-badge" id="draftStatus">✓ Draft memory ready</span>
+        <span class="sync-badge" id="cloudSyncStatus" onclick="switchTab('settings')">☁️ Cloud Sync: Local Only</span>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('journal')">✏️ Journal</button>
+      <button class="tab-btn" onclick="switchTab('history')">📚 History</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙️ Kids & Cloud Sync</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="tab-journal">
+
+      <!-- 1. Date & Day Type -->
+      <div class="card date-bar">
+        <div>
+          <h2 class="card-title" style="margin:0;">📅 Journal Date</h2>
+          <span class="sub-label">Draft auto-saves continuously in background</span>
+        </div>
+        <input type="date" id="entryDate" onchange="saveProceduralDraft()" />
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>🏫 What Kind of Day Was It?</span>
+          <span class="sub-label">Pick one or more</span>
+        </div>
+        <div class="chip-grid" id="dayTypeGrid"></div>
+      </div>
+
+      <!-- 2. How Are You Feeling? -->
+      <div class="card">
+        <div class="card-title">
+          <span>🎭 How Are You Feeling Today?</span>
+          <span class="sub-label">Pick all matching feelings</span>
+        </div>
+        <div class="chip-grid" id="emotionGrid"></div>
+      </div>
+
+      <!-- 3. Energy Level (Interactive Fillable Battery Bar) -->
+      <div class="card">
+        <div class="card-title">
+          <span>⚡ My Energy Level Today</span>
+          <span class="sub-label">Tap or drag anywhere along the battery to fill it!</span>
+        </div>
+
+        <div class="battery-widget">
+          <div class="battery-header">
+            <span class="battery-status-tag" id="batteryStatusLabel">
+              <span id="batteryEmoji" style="font-size:1.6rem;">🙂</span>
+              <span id="batteryDesc">Steady Energy</span>
+            </span>
+            <span class="battery-percent-pill" id="batteryPercentText">60% Charged</span>
+          </div>
+
+          <div class="battery-case-wrapper">
+            <div class="battery-outer-shell" id="batteryShell">
+              <div class="battery-fill" id="batteryFill">
+                <div class="battery-shine"></div>
+                <div class="battery-thumb"></div>
+              </div>
+            </div>
+            <div class="battery-cap"></div>
+          </div>
+
+          <div class="battery-ticks">
+            <div class="battery-tick" onclick="setEnergyPercent(15)">
+              <div class="tick-line"></div>
+              <span>🪫 15%</span>
+              <span style="font-size:0.7rem; opacity:0.8;">Empty</span>
+            </div>
+            <div class="battery-tick" onclick="setEnergyPercent(35)">
+              <div class="tick-line"></div>
+              <span>🐢 35%</span>
+              <span style="font-size:0.7rem; opacity:0.8;">Low</span>
+            </div>
+            <div class="battery-tick" onclick="setEnergyPercent(60)">
+              <div class="tick-line"></div>
+              <span>🙂 60%</span>
+              <span style="font-size:0.7rem; opacity:0.8;">Steady</span>
+            </div>
+            <div class="battery-tick" onclick="setEnergyPercent(85)">
+              <div class="tick-line"></div>
+              <span>⚡ 85%</span>
+              <span style="font-size:0.7rem; opacity:0.8;">High</span>
+            </div>
+            <div class="battery-tick" onclick="setEnergyPercent(100)">
+              <div class="tick-line"></div>
+              <span>🚀 100%</span>
+              <span style="font-size:0.7rem; opacity:0.8;">Super</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. How Did I Sleep (Directly Under Energy) -->
+      <div class="card">
+        <div class="card-title">
+          <span>😴 How Did I Sleep Last Night?</span>
+          <span class="sub-label">Morning battery check</span>
+        </div>
+        <div class="prompt-group" style="margin-bottom:0;">
+          <input type="text" id="sleepNote" placeholder="e.g., Slept great, woke up early, cool dream, cozy..." oninput="saveProceduralDraft()" />
+        </div>
+      </div>
+
+      <!-- 5. Single Consolidated Highlights & Gratitude -->
+      <div class="card">
+        <div class="card-title">🌟 Something Good From Today or Something I'm Thankful For</div>
+        <div class="prompt-group" style="margin-bottom:0;">
+          <textarea id="singleHighlight" rows="3" placeholder="A fun game, awesome moment with family, nice friend, tasty food, or something you loved..." oninput="saveProceduralDraft()"></textarea>
+        </div>
+      </div>
+
+      <!-- 6. Expanded Activities & Weather Section -->
+      <div class="card">
+        <div class="card-title">
+          <span>🏃 Activities & Things I Did</span>
+          <span class="sub-label">Pick any that apply</span>
+        </div>
+        <div class="chip-grid" id="activityGrid" style="margin-bottom:18px;"></div>
+
+        <div class="card-title">
+          <span>🌦️ Weather Today</span>
+          <span class="sub-label">Outside conditions</span>
+        </div>
+        <div class="chip-grid" id="weatherGrid"></div>
+      </div>
+
+      <!-- 7. Upgraded Studio Drawing Canvas -->
+      <div class="card">
+        <div class="card-title">
+          <span>🎨 Doodle & Shape Studio</span>
+          <span class="sub-label">Freehand or click-and-drag shapes</span>
+        </div>
+
+        <div class="studio-toolbar">
+          <div class="toolbar-row">
+            <div class="tool-group">
+              <button class="tool-btn active" id="tool-brush" onclick="setDrawTool('brush')">🖌️ Brush</button>
+              <button class="tool-btn" id="tool-eraser" onclick="setDrawTool('eraser')">🧽 Eraser</button>
+              <button class="tool-btn" id="tool-bucket" onclick="setDrawTool('bucket')">🪣 Bucket</button>
+              <button class="tool-btn" id="tool-rect" onclick="setDrawTool('rect')">⬜ Square</button>
+              <button class="tool-btn" id="tool-circle" onclick="setDrawTool('circle')">⭕ Circle</button>
+              <button class="tool-btn" id="tool-triangle" onclick="setDrawTool('triangle')">🔺 Triangle</button>
+            </div>
+            <div class="tool-group">
+              <button class="tool-btn" id="undoBtn" onclick="undoCanvas()" disabled>↩️ Undo (0)</button>
+              <button class="tool-btn" onclick="clearCanvas(true)">🗑️ Clear</button>
+            </div>
+          </div>
+
+          <div class="toolbar-row">
+            <div class="tool-group">
+              <span class="sub-label" style="margin-right:4px;">Size:</span>
+              <button class="size-btn" id="size-small" onclick="setBrushSize('small')">
+                <span class="dot-preview" style="width:6px;height:6px;"></span> Small
+              </button>
+              <button class="size-btn active" id="size-medium" onclick="setBrushSize('medium')">
+                <span class="dot-preview" style="width:12px;height:12px;"></span> Medium
+              </button>
+              <button class="size-btn" id="size-large" onclick="setBrushSize('large')">
+                <span class="dot-preview" style="width:18px;height:18px;"></span> Large
+              </button>
+            </div>
+
+            <div class="color-palette" id="colorPalette"></div>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="journalCanvas" width="900" height="450"></canvas>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitJournalEntry()">✅ Save & Submit Journal Entry</button>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="tab-history" class="hidden">
+      <div class="backup-bar">
+        <div>
+          <strong>🛡️ Repository History & Backup</strong>
+          <div class="sub-label">Entries automatically commit to GitHub or can be saved locally.</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-cloud-sync" onclick="syncWithGitHub(true)">☁️ Sync All with GitHub</button>
+          <button class="btn-secondary" onclick="exportHistoryJSON()">💾 Save File (.json)</button>
+          <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📂 Load File</button>
+          <button class="btn-secondary" onclick="exportHistoryCSV()">📊 Export CSV</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importHistoryJSON(event)" />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📖 Past Journal Submissions</span>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS & CLOUD SYNC TAB -->
+    <div id="tab-settings" class="hidden">
+      <div class="card">
+        <div class="card-title">
+          <span>👧👦 Customize Kids & Themes</span>
+          <span class="sub-label">Auto-synced to <code>profiles.json</code> on GitHub</span>
+        </div>
+        <div id="profilesEditor"></div>
+        <div style="margin-top:10px;">
+          <button class="btn-secondary" onclick="addNewProfile()">➕ Add Another Profile</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>☁️ GitHub Cloud Sync Settings</span>
+        </div>
+        <p class="sub-label" style="line-height:1.5; margin-bottom:14px;">
+          With your token added here, the app writes directly to <code>history.json</code> (for entries) and <code>profiles.json</code> (for kids/colors) in your GitHub repository. PC, iPad, and future index updates stay 100% unified.
+        </p>
+
+        <div class="sync-panel">
+          <div class="prompt-group">
+            <label>GitHub Repository (Owner/Repo):</label>
+            <input type="text" id="ghRepo" placeholder="Jawesome-Yellow/DailyJournal" onchange="saveGitHubConfig()" />
+          </div>
+          <div class="prompt-group">
+            <label>GitHub Personal Access Token (PAT):</label>
+            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" onchange="saveGitHubConfig()" />
+            <div class="sub-label" style="margin-top:4px;">Saved only in this browser's local storage. Never exposed in public repo code.</div>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button class="btn-cloud-sync" onclick="testAndPullAllData()">🔄 Save Settings & Sync All Files Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**************************************************************
+     * 1. CONSTANTS & EXPANDED OPTIONS
+     **************************************************************/
+    const DAY_TYPES = [
+      { id: 'full_school', label: 'Full School Day', emoji: '🎒' },
+      { id: 'part_school', label: 'Part School Day', emoji: '🕒' },
+      { id: 'weekend', label: 'Weekend', emoji: '🎉' },
+      { id: 'home_day', label: 'Home / Chill Day', emoji: '🏠' },
+      { id: 'sick_day', label: 'Sick / Rest Day', emoji: '🤒' },
+      { id: 'special_trip', label: 'Special / Trip', emoji: '✈️' }
+    ];
+
+    const EMOTIONS = [
+      { id: 'happy', label: 'Happy', emoji: '😄' },
+      { id: 'excited', label: 'Excited', emoji: '🤩' },
+      { id: 'calm', label: 'Calm', emoji: '😌' },
+      { id: 'proud', label: 'Proud', emoji: '🏆' },
+      { id: 'silly', label: 'Silly', emoji: '🤪' },
+      { id: 'grateful', label: 'Thankful', emoji: '🥰' },
+      { id: 'tired', label: 'Tired', emoji: '🥱' },
+      { id: 'bored', label: 'Bored', emoji: '😐' },
+      { id: 'nervous', label: 'Nervous', emoji: '😬' },
+      { id: 'frustrated', label: 'Frustrated', emoji: '😤' },
+      { id: 'sad', label: 'Sad', emoji: '😢' },
+      { id: 'angry', label: 'Angry', emoji: '😡' }
+    ];
+
+    const ACTIVITIES = [
+      { id: 'chatted', label: 'Chatted with Friends', emoji: '💬' },
+      { id: 'friends_in_person', label: 'Played with Friends', emoji: '🤝' },
+      { id: 'gaming', label: 'Gaming', emoji: '🎮' },
+      { id: 'sports', label: 'Sports & Practice', emoji: '⚽' },
+      { id: 'outside', label: 'Outside / Nature', emoji: '🌲' },
+      { id: 'reading', label: 'Reading', emoji: '📚' },
+      { id: 'art', label: 'Creating & Art', emoji: '🎨' },
+      { id: 'coding', label: 'Coding & Tech', emoji: '💻' },
+      { id: 'board_games', label: 'Board Games / Puzzles', emoji: '🎲' },
+      { id: 'movies', label: 'Movie & Shows', emoji: '🍿' },
+      { id: 'music', label: 'Music & Dance', emoji: '🎵' },
+      { id: 'family_time', label: 'Family Time', emoji: '🏡' }
+    ];
+
+    const WEATHER = [
+      { id: 'sunny', label: 'Sunny', emoji: '☀️' },
+      { id: 'cloudy', label: 'Cloudy', emoji: '☁️' },
+      { id: 'rainy', label: 'Rainy', emoji: '🌧️' },
+      { id: 'snowy', label: 'Snowy', emoji: '❄️' },
+      { id: 'windy', label: 'Windy', emoji: '💨' }
+    ];
+
+    const PALETTE_COLORS = [
+      '#1e293b',
+      '#ffffff',
+      '#ef4444',
+      '#f97316',
+      '#eab308',
+      '#22c55e',
+      '#06b6d4',
+      '#3b82f6',
+      '#8b5cf6',
+      '#ec4899',
+      '#78350f'
+    ];
+
+    const SIZE_MAP = {
+      brush:  { small: 4,  medium: 10, large: 22 },
+      eraser: { small: 12, medium: 28, large: 54 },
+      shape:  { small: 3,  medium: 6,  large: 12 }
+    };
+
+    /**************************************************************
+     * 2. STATE & STORAGE KEYS
+     **************************************************************/
+    const STORAGE_PROFILES  = 'dailyJournal_profiles_v1';
+    const STORAGE_HISTORY   = 'dailyJournal_entries_v1';
+    const STORAGE_DRAFT     = 'dailyJournal_draft_v1';
+    const STORAGE_GH_REPO   = 'dailyJournal_gh_repo';
+    const STORAGE_GH_TOKEN  = 'dailyJournal_gh_token';
+
+    let defaultProfiles = [
+      { id: 'kid1', name: 'Kacen', avatar: '🚀', color: '#4f46e5', bg: '#eef2ff' },
+      { id: 'kid2', name: 'Bodhi', avatar: '🦄', color: '#db2777', bg: '#fdf2f8' }
+    ];
+
+    let profiles = JSON.parse(localStorage.getItem(STORAGE_PROFILES)) || defaultProfiles;
+    let activeKidId = profiles[0]?.id || 'kid1';
+    let entries = JSON.parse(localStorage.getItem(STORAGE_HISTORY)) || [];
+
+    let draftState = {
+      kidId: activeKidId,
+      date: new Date().toISOString().split('T')[0],
+      dayTypes: [],
+      emotions: [],
+      energyPercent: 60,
+      sleepNote: '',
+      singleHighlight: '',
+      activities: [],
+      weather: [],
+      canvasDataUrl: null
+    };
+
+    /**************************************************************
+     * 3. BATTERY BAR INTERACTION (TOUCH, CLICK & DRAG)
+     **************************************************************/
+    const batteryShell = document.getElementById('batteryShell');
+    const batteryFill  = document.getElementById('batteryFill');
+    let isDraggingBattery = false;
+
+    function getEnergyMeta(pct) {
+      if (pct <= 20) {
+        return { emoji: '🪫', label: 'Empty Battery', gradient: 'linear-gradient(90deg, #ef4444, #f87171)' };
+      } else if (pct <= 45) {
+        return { emoji: '🐢', label: 'Low Energy', gradient: 'linear-gradient(90deg, #f97316, #fb923c)' };
+      } else if (pct <= 70) {
+        return { emoji: '🙂', label: 'Steady Energy', gradient: 'linear-gradient(90deg, #eab308, #22c55e)' };
+      } else if (pct <= 90) {
+        return { emoji: '⚡', label: 'High Energy!', gradient: 'linear-gradient(90deg, #10b981, #06b6d4)' };
+      } else {
+        return { emoji: '🚀', label: 'Supercharged!', gradient: 'linear-gradient(90deg, #3b82f6, #8b5cf6)' };
+      }
+    }
+
+    function updateBatteryUI(pct) {
+      pct = Math.max(5, Math.min(100, Math.round(pct)));
+      const meta = getEnergyMeta(pct);
+
+      batteryFill.style.width = pct + '%';
+      batteryFill.style.background = meta.gradient;
+
+      document.getElementById('batteryEmoji').textContent = meta.emoji;
+      document.getElementById('batteryDesc').textContent = meta.label;
+      document.getElementById('batteryPercentText').textContent = `${pct}% Charged`;
+    }
+
+    function setEnergyPercent(pct) {
+      draftState.energyPercent = pct;
+      updateBatteryUI(pct);
+      saveProceduralDraft();
+    }
+
+    function calculateBatteryPosition(e) {
+      const rect = batteryShell.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+      const pct = Math.max(5, Math.min(100, Math.round((x / rect.width) * 100)));
+      setEnergyPercent(pct);
+    }
+
+    batteryShell.addEventListener('mousedown', (e) => {
+      isDraggingBattery = true;
+      calculateBatteryPosition(e);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingBattery) return;
+      calculateBatteryPosition(e);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDraggingBattery) isDraggingBattery = false;
+    });
+
+    batteryShell.addEventListener('touchstart', (e) => {
+      isDraggingBattery = true;
+      calculateBatteryPosition(e);
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDraggingBattery) return;
+      calculateBatteryPosition(e);
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      if (isDraggingBattery) isDraggingBattery = false;
+    });
+
+    /**************************************************************
+     * 4. DRAWING STUDIO ENGINE (10 UNDOS + DRAG SHAPES + S/M/L)
+     **************************************************************/
+    const canvas = document.getElementById('journalCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let currentTool = 'brush';
+    let currentSizeKey = 'medium';
+    let currentColor = PALETTE_COLORS[0];
+
+    let isDrawing = false;
+    let startX = 0;
+    let startY = 0;
+    let dragSnapshot = null;
+
+    const MAX_UNDOS = 10;
+    let undoStack = [];
+
+    function initCanvasBlank() {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function pushUndoState() {
+      if (undoStack.length >= MAX_UNDOS) {
+        undoStack.shift();
+      }
+      undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+      updateUndoButtonUI();
+    }
+
+    function undoCanvas() {
+      if (undoStack.length === 0) return;
+      const previousImage = undoStack.pop();
+      ctx.putImageData(previousImage, 0, 0);
+      updateUndoButtonUI();
+      saveProceduralDraft();
+    }
+
+    function updateUndoButtonUI() {
+      const btn = document.getElementById('undoBtn');
+      btn.textContent = `↩️ Undo (${undoStack.length})`;
+      btn.disabled = undoStack.length === 0;
+    }
+
+    function clearCanvas(recordUndo = true) {
+      if (recordUndo) pushUndoState();
+      initCanvasBlank();
+      saveProceduralDraft();
+    }
+
+    function setDrawTool(tool) {
+      currentTool = tool;
+      ['brush', 'eraser', 'bucket', 'rect', 'circle', 'triangle'].forEach(t => {
+        document.getElementById('tool-' + t).classList.toggle('active', t === tool);
+      });
+    }
+
+    function setBrushSize(sizeKey) {
+      currentSizeKey = sizeKey;
+      ['small', 'medium', 'large'].forEach(s => {
+        document.getElementById('size-' + s).classList.toggle('active', s === sizeKey);
+      });
+    }
+
+    function setColor(color) {
+      currentColor = color;
+      if (currentTool === 'eraser') {
+        setDrawTool('brush');
+      }
+      renderPalette();
+    }
+
+    function renderPalette() {
+      const container = document.getElementById('colorPalette');
+      container.innerHTML = '';
+      PALETTE_COLORS.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch' + (color.toLowerCase() === currentColor.toLowerCase() ? ' active' : '');
+        swatch.style.backgroundColor = color;
+        if (color.toLowerCase() === '#ffffff') {
+          swatch.title = 'Pure White';
+          swatch.style.borderColor = '#94a3b8';
+        }
+        swatch.onclick = () => setColor(color);
+        container.appendChild(swatch);
+      });
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function handlePointerDown(e) {
+      e.preventDefault();
+      const pos = getCanvasCoords(e);
+
+      if (currentTool === 'bucket') {
+        pushUndoState();
+        floodFill(Math.floor(pos.x), Math.floor(pos.y), currentColor);
+        saveProceduralDraft();
+        return;
+      }
+
+      pushUndoState();
+      isDrawing = true;
+      startX = pos.x;
+      startY = pos.y;
+
+      if (currentTool === 'brush' || currentTool === 'eraser') {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+        ctx.lineWidth = currentTool === 'eraser'
+          ? SIZE_MAP.eraser[currentSizeKey]
+          : SIZE_MAP.brush[currentSizeKey];
+        ctx.lineTo(startX + 0.1, startY + 0.1);
+        ctx.stroke();
+      } else {
+        dragSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function handlePointerMove(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getCanvasCoords(e);
+
+      if (currentTool === 'brush' || currentTool === 'eraser') {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (['rect', 'circle', 'triangle'].includes(currentTool)) {
+        ctx.putImageData(dragSnapshot, 0, 0);
+        drawDraggedShape(currentTool, startX, startY, pos.x, pos.y);
+      }
+    }
+
+    function handlePointerUp(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+      dragSnapshot = null;
+      saveProceduralDraft();
+    }
+
+    function drawDraggedShape(shape, x1, y1, x2, y2) {
+      ctx.save();
+      ctx.fillStyle = currentColor;
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = SIZE_MAP.shape[currentSizeKey];
+      ctx.lineJoin = 'round';
+
+      const left = Math.min(x1, x2);
+      const top = Math.min(y1, y2);
+      const w = Math.abs(x2 - x1);
+      const h = Math.abs(y2 - y1);
+
+      ctx.beginPath();
+      if (shape === 'rect') {
+        ctx.fillRect(left, top, w, h);
+      } else if (shape === 'circle') {
+        const cx = left + w / 2;
+        const cy = top + h / 2;
+        ctx.ellipse(cx, cy, Math.max(1, w / 2), Math.max(1, h / 2), 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (shape === 'triangle') {
+        ctx.moveTo(left + w / 2, top);
+        ctx.lineTo(left + w, top + h);
+        ctx.lineTo(left, top + h);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      const num = parseInt(clean.length === 3 ? clean.split('').map(c=>c+c).join('') : clean, 16);
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255, 255];
+    }
+
+    function floodFill(startX, startY, fillHex) {
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+      const width = canvas.width;
+      const height = canvas.height;
+
+      const startIdx = (startY * width + startX) * 4;
+      const targetR = data[startIdx];
+      const targetG = data[startIdx + 1];
+      const targetB = data[startIdx + 2];
+      const [fillR, fillG, fillB] = hexToRgb(fillHex);
+
+      if (targetR === fillR && targetG === fillG && targetB === fillB) return;
+
+      const stack = [[startX, startY]];
+      while (stack.length > 0) {
+        const [x, y] = stack.pop();
+        if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+        const idx = (y * width + x) * 4;
+        if (
+          Math.abs(data[idx] - targetR) <= 22 &&
+          Math.abs(data[idx + 1] - targetG) <= 22 &&
+          Math.abs(data[idx + 2] - targetB) <= 22
+        ) {
+          data[idx] = fillR;
+          data[idx + 1] = fillG;
+          data[idx + 2] = fillB;
+          data[idx + 3] = 255;
+          stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+    canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
+    window.addEventListener('touchend', handlePointerUp);
+
+    /**************************************************************
+     * 5. PROCEDURAL AUTO-SAVE IN MEMORY
+     **************************************************************/
+    function saveProceduralDraft() {
+      draftState.kidId = activeKidId;
+      draftState.date = document.getElementById('entryDate').value;
+      draftState.sleepNote = document.getElementById('sleepNote').value;
+      draftState.singleHighlight = document.getElementById('singleHighlight').value;
+      draftState.canvasDataUrl = canvas.toDataURL('image/png');
+
+      localStorage.setItem(STORAGE_DRAFT + '_' + activeKidId, JSON.stringify(draftState));
+
+      const badge = document.getElementById('draftStatus');
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      badge.textContent = `✓ Auto-saved (${now})`;
+    }
+
+    function loadProceduralDraftForKid(kidId) {
+      const saved = localStorage.getItem(STORAGE_DRAFT + '_' + kidId);
+      undoStack = [];
+      updateUndoButtonUI();
+
+      if (saved) {
+        try {
+          draftState = JSON.parse(saved);
+        } catch (e) {
+          resetDraftObject(kidId);
+        }
+      } else {
+        resetDraftObject(kidId);
+      }
+
+      document.getElementById('entryDate').value = draftState.date || new Date().toISOString().split('T')[0];
+      document.getElementById('sleepNote').value = draftState.sleepNote || '';
+      document.getElementById('singleHighlight').value = draftState.singleHighlight || '';
+
+      renderInteractiveGrids();
+      updateBatteryUI(draftState.energyPercent ?? 60);
+
+      initCanvasBlank();
+      if (draftState.canvasDataUrl) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = draftState.canvasDataUrl;
+      }
+    }
+
+    function resetDraftObject(kidId) {
+      draftState = {
+        kidId: kidId,
+        date: new Date().toISOString().split('T')[0],
+        dayTypes: [],
+        emotions: [],
+        energyPercent: 60,
+        sleepNote: '',
+        singleHighlight: '',
+        activities: [],
+        weather: [],
+        canvasDataUrl: null
+      };
+    }
+
+    /**************************************************************
+     * 6. RENDERING UI & MULTI-SELECT GRIDS
+     **************************************************************/
+    function applyThemeForActiveKid() {
+      const kid = profiles.find(p => p.id === activeKidId) || profiles[0] || defaultProfiles[0];
+      document.documentElement.style.setProperty('--primary', kid.color);
+      document.documentElement.style.setProperty('--bg-color', kid.bg);
+    }
+
+    function renderProfileSwitcher() {
+      const container = document.getElementById('profileSwitcher');
+      container.innerHTML = '';
+      profiles.forEach(kid => {
+        const btn = document.createElement('button');
+        btn.className = 'kid-pill' + (kid.id === activeKidId ? ' active' : '');
+        btn.innerHTML = `<span>${kid.avatar}</span> <span>${kid.name}</span>`;
+        btn.onclick = () => {
+          activeKidId = kid.id;
+          applyThemeForActiveKid();
+          renderProfileSwitcher();
+          loadProceduralDraftForKid(activeKidId);
+          renderHistoryList();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function toggleArrayItem(arr, item) {
+      const idx = arr.indexOf(item);
+      if (idx === -1) arr.push(item);
+      else arr.splice(idx, 1);
+      saveProceduralDraft();
+      renderInteractiveGrids();
+    }
+
+    function renderInteractiveGrids() {
+      // Day Types
+      const dayContainer = document.getElementById('dayTypeGrid');
+      dayContainer.innerHTML = '';
+      DAY_TYPES.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'chip' + (draftState.dayTypes.includes(d.id) ? ' selected' : '');
+        el.innerHTML = `<span class="emoji">${d.emoji}</span><span>${d.label}</span>`;
+        el.onclick = () => toggleArrayItem(draftState.dayTypes, d.id);
+        dayContainer.appendChild(el);
+      });
+
+      // Emotions
+      const emoContainer = document.getElementById('emotionGrid');
+      emoContainer.innerHTML = '';
+      EMOTIONS.forEach(e => {
+        const el = document.createElement('div');
+        el.className = 'chip' + (draftState.emotions.includes(e.id) ? ' selected' : '');
+        el.innerHTML = `<span class="emoji">${e.emoji}</span><span>${e.label}</span>`;
+        el.onclick = () => toggleArrayItem(draftState.emotions, e.id);
+        emoContainer.appendChild(el);
+      });
+
+      // Activities
+      const actContainer = document.getElementById('activityGrid');
+      actContainer.innerHTML = '';
+      ACTIVITIES.forEach(a => {
+        const el = document.createElement('div');
+        el.className = 'chip' + (draftState.activities.includes(a.id) ? ' selected' : '');
+        el.innerHTML = `<span class="emoji">${a.emoji}</span><span>${a.label}</span>`;
+        el.onclick = () => toggleArrayItem(draftState.activities, a.id);
+        actContainer.appendChild(el);
+      });
+
+      // Weather
+      const weaContainer = document.getElementById('weatherGrid');
+      weaContainer.innerHTML = '';
+      WEATHER.forEach(w => {
+        const el = document.createElement('div');
+        el.className = 'chip' + (draftState.weather.includes(w.id) ? ' selected' : '');
+        el.innerHTML = `<span class="emoji">${w.emoji}</span><span>${w.label}</span>`;
+        el.onclick = () => toggleArrayItem(draftState.weather, w.id);
+        weaContainer.appendChild(el);
+      });
+    }
+
+    /**************************************************************
+     * 7. DUAL GITHUB SYNC ENGINE (`history.json` & `profiles.json`)
+     **************************************************************/
+    function saveGitHubConfig() {
+      const repo = document.getElementById('ghRepo').value.trim();
+      const token = document.getElementById('ghToken').value.trim();
+      localStorage.setItem(STORAGE_GH_REPO, repo);
+      localStorage.setItem(STORAGE_GH_TOKEN, token);
+      updateSyncBadge();
+    }
+
+    function updateSyncBadge() {
+      const repo = localStorage.getItem(STORAGE_GH_REPO);
+      const token = localStorage.getItem(STORAGE_GH_TOKEN);
+      const badge = document.getElementById('cloudSyncStatus');
+      if (repo && token) {
+        badge.textContent = `☁️ GitHub Synced`;
+        badge.style.color = '#10b981';
+        badge.style.background = '#d1fae5';
+      } else {
+        badge.textContent = '☁️ Cloud Sync: Local Only';
+        badge.style.color = '#6366f1';
+        badge.style.background = '#e0e7ff';
+      }
+    }
+
+    async function fetchGitHubJsonFile(fileName) {
+      const repo = localStorage.getItem(STORAGE_GH_REPO);
+      const token = localStorage.getItem(STORAGE_GH_TOKEN);
+      if (!repo || !token) return null;
+
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (res.status === 200) {
+          const fileData = await res.json();
+          const decoded = decodeURIComponent(escape(atob(fileData.content)));
+          return { sha: fileData.sha, data: JSON.parse(decoded) };
+        }
+      } catch (e) {
+        console.warn(`Could not fetch ${fileName} from GitHub:`, e);
+      }
+      return null;
+    }
+
+    async function writeGitHubJsonFile(fileName, contentObj, message, existingSha = null) {
+      const repo = localStorage.getItem(STORAGE_GH_REPO);
+      const token = localStorage.getItem(STORAGE_GH_TOKEN);
+      if (!repo || !token) return false;
+
+      try {
+        let sha = existingSha;
+        if (!sha) {
+          const current = await fetchGitHubJsonFile(fileName);
+          if (current) sha = current.sha;
+        }
+
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(contentObj, null, 2))));
+        const payload = {
+          message: message,
+          content: encoded
+        };
+        if (sha) payload.sha = sha;
+
+        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        return res.ok;
+      } catch (err) {
+        console.error(`Failed to write ${fileName} to GitHub:`, err);
+        return false;
+      }
+    }
+
+    async function syncHistoryWithGitHub(showFeedback = false) {
+      const remote = await fetchGitHubJsonFile('history.json');
+      if (remote && Array.isArray(remote.data)) {
+        const existingIds = new Set(entries.map(e => e.id));
+        remote.data.forEach(re => {
+          if (!existingIds.has(re.id)) {
+            entries.push(re);
+            existingIds.add(re.id);
+          }
+        });
+        entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        localStorage.setItem(STORAGE_HISTORY, JSON.stringify(entries));
+      }
+
+      await writeGitHubJsonFile('history.json', entries, 'Update journal history [skip ci]', remote?.sha);
+      renderHistoryList();
+    }
+
+    async function syncProfilesWithGitHub() {
+      const remote = await fetchGitHubJsonFile('profiles.json');
+      if (remote && Array.isArray(remote.data) && remote.data.length > 0) {
+        profiles = remote.data;
+        localStorage.setItem(STORAGE_PROFILES, JSON.stringify(profiles));
+        applyThemeForActiveKid();
+        renderProfileSwitcher();
+        renderProfilesEditor();
+      } else {
+        await writeGitHubJsonFile('profiles.json', profiles, 'Initialize kids & theme profiles [skip ci]');
+      }
+    }
+
+    async function syncWithGitHub(showFeedback = false) {
+      const repo = localStorage.getItem(STORAGE_GH_REPO);
+      const token = localStorage.getItem(STORAGE_GH_TOKEN);
+      if (!repo || !token) return;
+
+      await syncProfilesWithGitHub();
+      await syncHistoryWithGitHub(showFeedback);
+      if (showFeedback) alert('☁️ Synced successfully with GitHub (history.json & profiles.json)!');
+    }
+
+    async function testAndPullAllData() {
+      saveGitHubConfig();
+      await syncWithGitHub(true);
+    }
+
+    /**************************************************************
+     * 8. SUBMIT & LOCAL HISTORY PERSISTENCE
+     **************************************************************/
+    async function submitJournalEntry() {
+      const kid = profiles.find(p => p.id === activeKidId) || profiles[0] || defaultProfiles[0];
+      const energyPct = draftState.energyPercent ?? 60;
+      const energyMeta = getEnergyMeta(energyPct);
+
+      const newEntry = {
+        id: 'entry_' + Date.now(),
+        timestamp: new Date().toISOString(),
+        kidId: kid.id,
+        kidName: kid.name,
+        date: document.getElementById('entryDate').value,
+        dayTypes: [...draftState.dayTypes],
+        emotions: [...draftState.emotions],
+        energyLevel: `${energyMeta.emoji} ${energyPct}% (${energyMeta.label})`,
+        sleepNote: document.getElementById('sleepNote').value.trim(),
+        singleHighlight: document.getElementById('singleHighlight').value.trim(),
+        activities: [...draftState.activities],
+        weather: [...draftState.weather],
+        drawing: canvas.toDataURL('image/png')
+      };
+
+      entries.unshift(newEntry);
+      localStorage.setItem(STORAGE_HISTORY, JSON.stringify(entries));
+
+      localStorage.removeItem(STORAGE_DRAFT + '_' + activeKidId);
+      resetDraftObject(activeKidId);
+      loadProceduralDraftForKid(activeKidId);
+
+      syncHistoryWithGitHub(false);
+
+      alert(`Awesome job, ${kid.name}! Your journal entry is saved!`);
+      switchTab('history');
+    }
+
+    function renderHistoryList() {
+      const container = document.getElementById('historyList');
+      const kidEntries = entries.filter(e => e.kidId === activeKidId);
+
+      if (kidEntries.length === 0) {
+        container.innerHTML = `<p class="sub-label">No entries saved for this profile yet.</p>`;
+        return;
+      }
+
+      container.innerHTML = kidEntries.map(e => {
+        const emoText = (e.emotions || []).map(id => {
+          const found = EMOTIONS.find(x => x.id === id);
+          return found ? `${found.emoji} ${found.label}` : id;
+        }).join(', ') || 'None selected';
+
+        const actText = (e.activities || []).map(id => {
+          const found = ACTIVITIES.find(x => x.id === id);
+          return found ? `${found.emoji} ${found.label}` : id;
+        }).join(', ');
+
+        return `
+          <div class="entry-item">
+            <div class="entry-header">
+              <span>📅 ${e.date} — ${e.kidName}</span>
+              <span>⚡ ${e.energyLevel || 'Steady Energy'}</span>
+            </div>
+            <div><strong>Feelings:</strong> ${emoText}</div>
+            ${e.sleepNote ? `<div style="margin-top:4px;"><strong>😴 Sleep:</strong> ${e.sleepNote}</div>` : ''}
+            ${e.singleHighlight ? `<div style="margin-top:6px;"><strong>🌟 Highlight:</strong> ${e.singleHighlight}</div>` : ''}
+            ${actText ? `<div style="margin-top:4px;"><strong>🏃 Activities:</strong> ${actText}</div>` : ''}
+            ${e.drawing ? `<img class="entry-drawing" src="${e.drawing}" alt="Drawing" />` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function exportHistoryJSON() {
+      const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `journal_history.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importHistoryJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          const list = Array.isArray(data) ? data : (data.entries || []);
+          const existingIds = new Set(entries.map(x => x.id));
+          let added = 0;
+          list.forEach(item => {
+            if (!existingIds.has(item.id)) {
+              entries.push(item);
+              added++;
+            }
+          });
+          entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          localStorage.setItem(STORAGE_HISTORY, JSON.stringify(entries));
+          renderHistoryList();
+          alert(`Loaded ${added} new entries from history file!`);
+        } catch (err) {
+          alert('Could not read history file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function exportHistoryCSV() {
+      const headers = ['Date', 'Kid', 'DayTypes', 'Emotions', 'EnergyLevel', 'Sleep', 'Highlight', 'Activities', 'Weather'];
+      const rows = entries.map(e => [
+        e.date,
+        e.kidName,
+        (e.dayTypes || []).join('|'),
+        (e.emotions || []).join('|'),
+        `"${(e.energyLevel || '').replace(/"/g, '""')}"`,
+        `"${(e.sleepNote || '').replace(/"/g, '""')}"`,
+        `"${(e.singleHighlight || '').replace(/"/g, '""')}"`,
+        (e.activities || []).join('|'),
+        (e.weather || []).join('|')
+      ]);
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'journal_export.csv';
+      a.click();
+    }
+
+    /**************************************************************
+     * 9. KIDS & THEME CUSTOMIZATION (Auto-Syncs to GitHub)
+     **************************************************************/
+    function renderProfilesEditor() {
+      const container = document.getElementById('profilesEditor');
+      container.innerHTML = profiles.map((p, idx) => `
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid var(--border);">
+          <input type="text" value="${p.avatar}" style="width:60px; text-align:center;" onchange="updateProfile(${idx}, 'avatar', this.value)" />
+          <input type="text" value="${p.name}" style="width:160px;" onchange="updateProfile(${idx}, 'name', this.value)" />
+          <label style="font-size:0.85rem; font-weight:700;">Accent:
+            <input type="color" value="${p.color}" onchange="updateProfile(${idx}, 'color', this.value)" />
+          </label>
+          <label style="font-size:0.85rem; font-weight:700;">Background:
+            <input type="color" value="${p.bg}" onchange="updateProfile(${idx}, 'bg', this.value)" />
+          </label>
+        </div>
+      `).join('');
+    }
+
+    async function updateProfile(idx, key, val) {
+      profiles[idx][key] = val;
+      localStorage.setItem(STORAGE_PROFILES, JSON.stringify(profiles));
+      applyThemeForActiveKid();
+      renderProfileSwitcher();
+
+      await writeGitHubJsonFile('profiles.json', profiles, `Update kid profile ${profiles[idx].name} [skip ci]`);
+    }
+
+    async function addNewProfile() {
+      const newKid = {
+        id: 'kid_' + Date.now(),
+        name: 'New Kid',
+        avatar: '⭐',
+        color: '#8b5cf6',
+        bg: '#f5f3ff'
+      };
+      profiles.push(newKid);
+      localStorage.setItem(STORAGE_PROFILES, JSON.stringify(profiles));
+      renderProfilesEditor();
+      renderProfileSwitcher();
+      await writeGitHubJsonFile('profiles.json', profiles, `Add new profile ${newKid.name} [skip ci]`);
+    }
+
+    function switchTab(tabName) {
+      ['journal', 'history', 'settings'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', t !== tabName);
+      });
+      const btns = document.querySelectorAll('.tab-btn');
+      btns[0].classList.toggle('active', tabName === 'journal');
+      btns[1].classList.toggle('active', tabName === 'history');
+      btns[2].classList.toggle('active', tabName === 'settings');
+
+      if (tabName === 'history') renderHistoryList();
+      if (tabName === 'settings') {
+        renderProfilesEditor();
+        document.getElementById('ghRepo').value = localStorage.getItem(STORAGE_GH_REPO) || '';
+        document.getElementById('ghToken').value = localStorage.getItem(STORAGE_GH_TOKEN) || '';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyThemeForActiveKid();
+      renderProfileSwitcher();
+      renderPalette();
+      loadProceduralDraftForKid(activeKidId);
+      updateSyncBadge();
+
+      syncWithGitHub(false);
+    });
+  </script>
+</body>
+</html>
